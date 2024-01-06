@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CompleteRegistrationRequest {
 
-
+    private String nickName;
 }
