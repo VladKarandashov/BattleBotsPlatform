@@ -6,6 +6,7 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 @Component
 public class AddUserHeaderFilter extends AbstractGatewayFilterFactory<AddUserHeaderFilter.Config> {
@@ -22,8 +23,10 @@ public class AddUserHeaderFilter extends AbstractGatewayFilterFactory<AddUserHea
                     var httpHeaders = HttpHeaders.writableHttpHeaders(request.getHeaders());
                     var user = ((OAuth2AuthenticationToken) authentication).getPrincipal();
                     var attributes = user.getAttributes();
+                    var userInfo = new JSONObject(attributes).toString();
+                    var userInfoEncoded = UriEncoder.encode(userInfo);
 
-                    httpHeaders.add("user", new JSONObject(attributes).toString());
+                    httpHeaders.add("user", userInfoEncoded);
                     return chain.filter(exchange);
                 });
     }
