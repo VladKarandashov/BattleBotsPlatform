@@ -32,6 +32,7 @@
 
     <modules>
         <module>crm-service</module>
+        <module>platform-utils</module>
     </modules>
 
     <dependencyManagement>
