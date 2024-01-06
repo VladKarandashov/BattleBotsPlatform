@@ -11,6 +11,7 @@
     <version>0.0.1</version>
     <name>crm-service</name>
     <description>crm-service</description>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
