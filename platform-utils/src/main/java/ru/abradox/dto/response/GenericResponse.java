@@ -1,4 +1,4 @@
-package ru.abradox.dto;
+package ru.abradox.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
