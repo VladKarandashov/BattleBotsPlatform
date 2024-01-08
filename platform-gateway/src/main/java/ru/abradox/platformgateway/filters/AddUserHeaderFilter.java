@@ -19,13 +19,13 @@ public class AddUserHeaderFilter extends AbstractGatewayFilterFactory<AddUserHea
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> exchange.getPrincipal()
                 .flatMap(authentication -> {
-                    var request = exchange.getRequest();
-                    var httpHeaders = HttpHeaders.writableHttpHeaders(request.getHeaders());
                     var user = ((OAuth2AuthenticationToken) authentication).getPrincipal();
                     var attributes = user.getAttributes();
                     var userInfo = new JSONObject(attributes).toString();
                     var userInfoEncoded = UriEncoder.encode(userInfo);
 
+                    var request = exchange.getRequest();
+                    var httpHeaders = HttpHeaders.writableHttpHeaders(request.getHeaders());
                     httpHeaders.add("user", userInfoEncoded);
                     return chain.filter(exchange);
                 });

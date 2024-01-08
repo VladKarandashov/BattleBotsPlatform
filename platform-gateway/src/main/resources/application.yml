@@ -13,7 +13,7 @@ spring:
           filters:
             - StripPrefix=1
             - TokenRelay=
-            - AddUserHeaderFilter=
+            - AddUserInfoHeader=
             - RemoveRequestHeader=cookie
             - RemoveRequestHeader=authorization
         - id: crm
