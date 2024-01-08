@@ -2,7 +2,9 @@ package ru.abradox.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 @Data
 @Builder
@@ -32,4 +34,10 @@ public class ProviderUserInfo {
 
     @JsonProperty("real_name")
     private String fullName;
+
+    @SneakyThrows
+    public static ProviderUserInfo parseProviderUserInfo(String providerUserInfoEncodedJson) {
+        var providerUserInfoJson = UriEncoder.decode(providerUserInfoEncodedJson);
+        return new ObjectMapper().readValue(providerUserInfoJson, ProviderUserInfo.class);
+    }
 }

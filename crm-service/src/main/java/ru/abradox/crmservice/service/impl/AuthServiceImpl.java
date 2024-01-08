@@ -1,11 +1,8 @@
 package ru.abradox.crmservice.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.util.UriEncoder;
 import ru.abradox.crmservice.dto.request.CompleteRegistrationRequest;
 import ru.abradox.crmservice.entity.UserEntity;
 import ru.abradox.crmservice.repository.UserRepository;
@@ -22,7 +19,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
 
     @Override
-    // TODO за кэшировать результат, кроме ("/registration", 307)
     public UserInfo getUserInfo(String providerUserId) {
         var user = findUserByProviderId(providerUserId);
         if (user.isBlocked()) {
@@ -42,7 +38,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void updateUserInfo(String providerUserInfoEncodedJson) {
-        var providerUserInfo = processProviderUserInfo(providerUserInfoEncodedJson);
+        var providerUserInfo = ProviderUserInfo.parseProviderUserInfo(providerUserInfoEncodedJson);
+        log.info("Получил providerUserInfo={}", providerUserInfo);
         var user = findUserByProviderId(providerUserInfo);
         user.setLogin(user.getLogin());
         user.setEmail(user.getEmail());
@@ -54,7 +51,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void completeRegistration(String providerUserInfoEncodedJson, CompleteRegistrationRequest request) {
-        var providerUserInfo = processProviderUserInfo(providerUserInfoEncodedJson);
+        var providerUserInfo = ProviderUserInfo.parseProviderUserInfo(providerUserInfoEncodedJson);
+        log.info("Получил providerUserInfo={}", providerUserInfo);
         var user = UserEntity.builder()
                 .providerId(providerUserInfo.getProviderId())
                 .login(providerUserInfo.getLogin())
@@ -78,13 +76,5 @@ public class AuthServiceImpl implements AuthService {
                     log.info("Не найден user с providerId={} -> отправляю на регистрацию", providerId);
                     return new BusinessRedirectException("/crm/registration", 307);
                 });
-    }
-
-    @SneakyThrows
-    private ProviderUserInfo processProviderUserInfo(String providerUserInfoEncodedJson) {
-        var providerUserInfoJson = UriEncoder.decode(providerUserInfoEncodedJson);
-        var providerUserInfo = new ObjectMapper().readValue(providerUserInfoJson, ProviderUserInfo.class);
-        log.info("Получил providerUserInfo={}", providerUserInfo);
-        return providerUserInfo;
     }
 }
