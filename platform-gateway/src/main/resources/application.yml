@@ -28,7 +28,7 @@ spring:
             - StripPrefix=1
             - TokenRelay=
             - RemoveRequestHeader=user
-            - AddUserHeaderFilter=
+            - AddProviderInfoHeader=
             - RemoveRequestHeader=cookie
             - RemoveRequestHeader=authorization
   main:

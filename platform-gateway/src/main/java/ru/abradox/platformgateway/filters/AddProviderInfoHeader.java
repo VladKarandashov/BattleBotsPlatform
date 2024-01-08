@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.util.UriEncoder;
 
 @Component
-public class AddUserHeaderFilter extends AbstractGatewayFilterFactory<AddUserHeaderFilter.Config> {
+public class AddProviderInfoHeader extends AbstractGatewayFilterFactory<AddProviderInfoHeader.Config> {
 
-    public AddUserHeaderFilter() {
+    public AddProviderInfoHeader() {
         super(Config.class);
     }
 
