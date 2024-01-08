@@ -13,6 +13,7 @@ spring:
           filters:
             - StripPrefix=1
             - TokenRelay=
+            - RemoveRequestHeader=user
             - AddUserInfoHeader=
             - RemoveRequestHeader=cookie
             - RemoveRequestHeader=authorization
@@ -24,6 +25,7 @@ spring:
           filters:
             - StripPrefix=1
             - TokenRelay=
+            - RemoveRequestHeader=user
             - AddUserHeaderFilter=
             - RemoveRequestHeader=cookie
             - RemoveRequestHeader=authorization
