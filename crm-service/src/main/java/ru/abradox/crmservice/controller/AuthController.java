@@ -65,7 +65,7 @@ public class AuthController {
 
     private ResponseEntity<Void> redirectToLk() {
         return ResponseEntity
-                .status(HttpStatusCode.valueOf(300))
+                .status(HttpStatusCode.valueOf(307))
                 .location(crmProperties.getPlatformUri())
                 .build();
     }

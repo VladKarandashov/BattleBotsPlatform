@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class CompleteRegistrationRequest {
 
     @NotBlank
-    @Pattern(regexp = "^(a-zA-Zа-яА-Я0-9{1,32})$")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я0-9]{1,32}$")
     private String nickName;
 }

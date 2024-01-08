@@ -13,5 +13,36 @@
 Для продолжения работы необходимо привязать аккаунт Telegram.
 Он будет использоваться для обратной связи и оповещении о важных событиях.
 <br>
+<br>
+<label for="nickName">Введите nickName: </label>
+<br>
+<input type="text" id="nickName" name="nickName" minlength="1" maxlength="32" pattern="^(a-zA-Zа-яА-Я0-9{1,32})$" required>
+<br>
+<br>
+<button onclick="sendNickname()">Отправить</button>
+
+<script>
+    function sendNickname() {
+        const nickname = document.getElementById('nickName').value;
+
+        fetch('api/v1/auth/completeRegistration', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nickName: nickname })
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                location.reload();
+            });
+    }
+</script>
 </body>
 </html>
