@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @ConfigurationPropertiesScan
 @EnableConfigurationProperties
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "ru.abradox")
 public class CrmServiceApplication {
 
     public static void main(String[] args) {

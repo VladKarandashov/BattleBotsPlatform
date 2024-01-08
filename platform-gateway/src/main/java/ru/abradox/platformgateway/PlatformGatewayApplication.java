@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "ru.abradox")
 @ConfigurationPropertiesScan
 @EnableConfigurationProperties
 public class PlatformGatewayApplication {
