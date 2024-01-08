@@ -3,12 +3,14 @@ package ru.abradox.crmservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.abradox.crmservice.config.CrmProperties;
 import ru.abradox.crmservice.dto.request.CompleteRegistrationRequest;
 import ru.abradox.crmservice.entity.UserEntity;
 import ru.abradox.crmservice.repository.UserRepository;
 import ru.abradox.crmservice.service.AuthService;
 import ru.abradox.dto.ProviderUserInfo;
 import ru.abradox.dto.UserInfo;
+import ru.abradox.exception.BusinessException;
 import ru.abradox.exception.BusinessRedirectException;
 
 @Slf4j
@@ -17,6 +19,7 @@ import ru.abradox.exception.BusinessRedirectException;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final CrmProperties crmProperties;
 
     @Override
     public UserInfo getUserInfo(String providerUserId) {
@@ -53,6 +56,13 @@ public class AuthServiceImpl implements AuthService {
     public void completeRegistration(String providerUserInfoEncodedJson, CompleteRegistrationRequest request) {
         var providerUserInfo = ProviderUserInfo.parseProviderUserInfo(providerUserInfoEncodedJson);
         log.info("Получил providerUserInfo={}", providerUserInfo);
+        if (userRepository.existsByProviderId(providerUserInfo.getProviderId())) {
+            throw new BusinessRedirectException(crmProperties.getPlatformUri(), 307);
+        }
+        if (userRepository.existsByNickName(request.getNickName())) {
+            throw new BusinessException(1408, "Такой nickname уже существует");
+        }
+        // TODO валидация телеграмма
         var user = UserEntity.builder()
                 .providerId(providerUserInfo.getProviderId())
                 .login(providerUserInfo.getLogin())
