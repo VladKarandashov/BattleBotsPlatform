@@ -2,7 +2,7 @@ package ru.abradox.platformgateway.client.crm;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,13 +19,13 @@ public class CrmClient {
 
     private final WebClient webClient = WebClient.create();
 
-    private final DiscoveryClient discoveryClient;
+    private final LoadBalancerClient loadBalancerClient;
 
     @Cacheable(USER_INFO_CACHE)
     public Mono<UserInfo> getUserById(String id) {
-        var uri = discoveryClient.getInstances("crm-service").get(0).getUri();
+        var uri = loadBalancerClient.choose("crm-service").getUri();
         return webClient.get()
-                .uri(uri+"/api/v1/auth/user/{id}", id)
+                .uri(uri + "/api/v1/auth/user/{id}", id)
                 .retrieve()
                 .onStatus(HttpStatusCode::is3xxRedirection, clientResponse ->
                         clientResponse
