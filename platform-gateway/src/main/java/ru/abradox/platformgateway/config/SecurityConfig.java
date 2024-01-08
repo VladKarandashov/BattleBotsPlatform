@@ -19,6 +19,7 @@ class SecurityConfig {
                 .oauth2Login(Customizer.withDefaults())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorize -> authorize
+                        .pathMatchers("/").permitAll()
                         .anyExchange().authenticated())
                 .build();
     }
