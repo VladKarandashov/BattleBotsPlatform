@@ -2,11 +2,13 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: gateway-service
   cloud:
     gateway:
       routes:
         - id: middleware
-          uri: http://localhost:8081
+          uri: lb://middleware-service
           predicates:
             - Path=/middleware/**
             - Method=GET,POST,PUT,DELETE
@@ -18,7 +20,7 @@ spring:
             - RemoveRequestHeader=cookie
             - RemoveRequestHeader=authorization
         - id: crm
-          uri: http://localhost:8082
+          uri: lb://crm-service
           predicates:
             - Path=/crm/**
             - Method=GET,POST,PUT,DELETE

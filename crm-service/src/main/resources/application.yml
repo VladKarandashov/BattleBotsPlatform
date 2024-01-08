@@ -18,6 +18,8 @@ spring:
       hibernate:
         default_schema: public
     database: postgresql
+  application:
+    name: crm-service
 
 logging:
   level:

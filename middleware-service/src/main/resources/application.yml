@@ -8,3 +8,7 @@ logging:
         web:
           filter:
             CommonsRequestLoggingFilter: DEBUG
+
+spring:
+  application:
+    name: middleware-service
