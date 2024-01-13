@@ -16,6 +16,7 @@ import ru.abradox.exception.BusinessRedirectException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+// TODO внедрить mapstruct
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;

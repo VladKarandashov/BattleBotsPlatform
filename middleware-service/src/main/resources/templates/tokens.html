@@ -2,19 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Личный кабинет</title>
+    <title>Токены</title>
 </head>
 <body>
-<h1>Личный кабинет</h1>
 
-<h2>Данные пользователя</h2>
-<button id="submitBtn">Напечатать в консоль данные пользователя</button>
-<h2>Разделы личного кабинета</h2>
-<button><a href="/middleware/view/tokens"> Страница токенов </a></button>
+<button id="submitBtn">Напечатать в консоль токены пользователя</button>
 
 <script>
     document.getElementById('submitBtn').addEventListener('click', function () {
-        fetch('/middleware/api/v1/whoami', {
+        fetch('/middleware/api/v1/token', {
             method: 'GET',
             credentials: "include"
         })

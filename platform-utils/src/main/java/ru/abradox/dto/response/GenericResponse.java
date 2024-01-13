@@ -33,4 +33,9 @@ public class GenericResponse<T> {
     public GenericResponse(int statusCode) {
         this.statusCode = statusCode;
     }
+
+    public GenericResponse(T data) {
+        this.statusCode = 0;
+        this.data = data;
+    }
 }
