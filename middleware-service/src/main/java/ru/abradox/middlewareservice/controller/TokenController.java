@@ -31,6 +31,7 @@ public class TokenController {
     }
 
     @PostMapping("/api/v1/token")
+    // TODO навесить rate limit
     public SimpleResponse createToken(UserInfo userInfo, @Valid @RequestBody CreateTokenRequest request) {
         return tokenService.createToken(userInfo, request);
     }

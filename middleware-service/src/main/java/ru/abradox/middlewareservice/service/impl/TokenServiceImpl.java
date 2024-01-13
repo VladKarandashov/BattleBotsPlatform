@@ -21,6 +21,7 @@ public class TokenServiceImpl implements TokenService {
     private final TokenServiceClient tokenServiceClient;
 
     @Override
+    // TODO добавить кеш (желательно с очищением после createToken)
     public List<TokenDto> getToken(Integer userId) {
         return tokenServiceClient.getTokenByUser(userId);
     }
