@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TokenServiceClient {
 
-    public static final String TOKEN_SERVICE = "token-service";
+    public static final String SERVICE_NAME = "token-service";
 
     private static final RestTemplate restTemplate = new RestTemplate();
 
@@ -39,6 +39,6 @@ public class TokenServiceClient {
     }
 
     private URI getServiceUri() {
-        return loadBalancerClient.choose(TOKEN_SERVICE).getUri();
+        return loadBalancerClient.choose(SERVICE_NAME).getUri();
     }
 }
