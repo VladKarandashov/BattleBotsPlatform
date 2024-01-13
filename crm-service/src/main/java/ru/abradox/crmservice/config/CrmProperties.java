@@ -10,7 +10,7 @@ import java.net.URI;
 @ConfigurationProperties(prefix = "crm")
 public class CrmProperties {
 
-    private String PLATFORM_LK_URI = "/middleware";
+    private String PLATFORM_LK_URI = "/middleware/view";
 
     @SneakyThrows
     public URI getPlatformUri() {
