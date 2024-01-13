@@ -3,6 +3,7 @@ package ru.abradox.tokenservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+import ru.abradox.client.token.TypeToken;
 
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "token")
+@Table(name = "Token")
 public class TokenEntity {
 
     @Id
@@ -24,16 +25,25 @@ public class TokenEntity {
     @Column(name = "user_id")
     private Integer userId;
 
+    /**
+     * Название бота
+     */
     @Column(name = "title", length = 16, nullable = false)
     private String title;
 
+    /**
+     * Тип токена (тестовый или реальный)
+     */
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", length = 16, nullable = false)
-    private String type;
-
-    @Column(name = "shoulder", length = 16, nullable = false)
-    private String shoulder;
+    private TypeToken type;
 
     @Column(name = "blocked")
     private boolean blocked;
 
+    public TokenEntity(Integer userId, String title, TypeToken type) {
+        this.userId = userId;
+        this.title = title;
+        this.type = type;
+    }
 }

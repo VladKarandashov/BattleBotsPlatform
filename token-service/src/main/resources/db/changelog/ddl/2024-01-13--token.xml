@@ -21,12 +21,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="title" type="VARCHAR(16)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="type" type="VARCHAR(16)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="shoulder" type="VARCHAR(16)">
                 <constraints nullable="false"/>
             </column>
             <column name="blocked" type="BOOLEAN" defaultValueBoolean="false"/>
