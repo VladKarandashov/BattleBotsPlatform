@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
         var user = findUserByProviderId(providerUserId);
         if (user.isBlocked()) {
             log.info("User с providerId={} ЗАБЛОКИРОВАН -> отправляю на страницу блока", providerUserId);
-            throw new BusinessRedirectException("/crm/blocked", 301);
+            throw new BusinessRedirectException("/crm/view/blocked", 301);
         }
         return UserInfo.builder()
                 .id(user.getId())
@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.findByProviderId(providerId)
                 .orElseThrow(() -> {
                     log.info("Не найден user с providerId={} -> отправляю на регистрацию", providerId);
-                    return new BusinessRedirectException("/crm/registration", 307);
+                    return new BusinessRedirectException("/crm/view/registration", 307);
                 });
     }
 }
