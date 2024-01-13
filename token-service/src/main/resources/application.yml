@@ -1,1 +1,22 @@
+server:
+  port: 8083
 
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://89.23.118.39:5432/default_db
+    username: gen_user
+    password: 6LPH8d9SiOsQ473209GkgIgf
+  liquibase:
+    enabled: true
+    changeLog: classpath:db/changelog/db.changelog-master.xml
+  jpa:
+    showSql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: public
+    database: postgresql
+  application:
+    name: token-service
