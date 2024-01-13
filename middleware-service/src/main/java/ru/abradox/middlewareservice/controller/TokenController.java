@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.abradox.client.token.TokenDto;
-import ru.abradox.dto.UserInfo;
-import ru.abradox.dto.response.GenericResponse;
-import ru.abradox.dto.response.SimpleResponse;
+import ru.abradox.common.UserInfo;
+import ru.abradox.common.response.GenericResponse;
+import ru.abradox.common.response.SimpleResponse;
 import ru.abradox.middlewareservice.dto.request.CreateTokenRequest;
 import ru.abradox.middlewareservice.service.TokenService;
 

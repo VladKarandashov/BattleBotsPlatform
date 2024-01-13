@@ -10,7 +10,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.yaml.snakeyaml.util.UriEncoder;
-import ru.abradox.dto.UserInfo;
+import ru.abradox.common.UserInfo;
 
 @Slf4j
 public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.abradox.client.token.request.CreateTokenRequest;
-import ru.abradox.dto.response.SimpleResponse;
+import ru.abradox.common.response.SimpleResponse;
 import ru.abradox.client.token.TokenDto;
 import ru.abradox.tokenservice.service.TokenService;
 

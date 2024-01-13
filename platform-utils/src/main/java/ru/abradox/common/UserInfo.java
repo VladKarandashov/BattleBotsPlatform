@@ -1,4 +1,4 @@
-package ru.abradox.dto;
+package ru.abradox.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

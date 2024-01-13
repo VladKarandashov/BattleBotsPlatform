@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.abradox.crmservice.config.CrmProperties;
 import ru.abradox.crmservice.dto.request.CompleteRegistrationRequest;
 import ru.abradox.crmservice.service.AuthService;
-import ru.abradox.dto.UserInfo;
+import ru.abradox.common.UserInfo;
 
 @Slf4j
 @RestController

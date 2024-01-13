@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
-import ru.abradox.dto.UserInfo;
+import ru.abradox.common.UserInfo;
 import ru.abradox.exception.BusinessRedirectException;
 
 import static ru.abradox.platformgateway.config.CacheConfig.USER_INFO_CACHE;

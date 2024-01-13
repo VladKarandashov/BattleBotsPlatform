@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.util.UriEncoder;
-import ru.abradox.dto.UserInfo;
+import ru.abradox.common.UserInfo;
 import ru.abradox.platformgateway.client.crm.CrmClient;
 
 @Slf4j

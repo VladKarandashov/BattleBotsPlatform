@@ -1,8 +1,8 @@
 package ru.abradox.middlewareservice.service;
 
 import ru.abradox.client.token.TokenDto;
-import ru.abradox.dto.UserInfo;
-import ru.abradox.dto.response.SimpleResponse;
+import ru.abradox.common.UserInfo;
+import ru.abradox.common.response.SimpleResponse;
 import ru.abradox.middlewareservice.dto.request.CreateTokenRequest;
 
 import java.util.List;

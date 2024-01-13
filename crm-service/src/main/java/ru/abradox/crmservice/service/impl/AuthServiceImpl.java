@@ -8,8 +8,8 @@ import ru.abradox.crmservice.dto.request.CompleteRegistrationRequest;
 import ru.abradox.crmservice.entity.UserEntity;
 import ru.abradox.crmservice.repository.UserRepository;
 import ru.abradox.crmservice.service.AuthService;
-import ru.abradox.dto.ProviderUserInfo;
-import ru.abradox.dto.UserInfo;
+import ru.abradox.common.ProviderUserInfo;
+import ru.abradox.common.UserInfo;
 import ru.abradox.exception.BusinessException;
 import ru.abradox.exception.BusinessRedirectException;
 
