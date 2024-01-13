@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.abradox.client.token.request.CreateTokenPairRequest;
+import ru.abradox.client.token.request.CreateTokenRequest;
 import ru.abradox.client.token.TokenDto;
 import ru.abradox.exception.BusinessException;
 import ru.abradox.tokenservice.config.TokenProperties;
@@ -49,7 +49,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     @Transactional
-    public void createToken(CreateTokenPairRequest request) {
+    public void createToken(CreateTokenRequest request) {
         var userId = request.getUserId();
         var botTitle = request.getTitle();
         var typeToken = request.getTypeToken();
@@ -61,7 +61,7 @@ public class TokenServiceImpl implements TokenService {
         }
 
         // проверяем существование бота с таким именем
-        var isTitleExist = tokenRepository.existsByTitleAndType(botTitle, typeToken);
+        var isTitleExist = tokenRepository.existsByTitle(botTitle);
         if (isTitleExist) {
             throw new BusinessException(1000, "Бот с таким именем уже зарегистрирован");
         }

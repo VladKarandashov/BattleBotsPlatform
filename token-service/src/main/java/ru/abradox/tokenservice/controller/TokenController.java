@@ -3,7 +3,7 @@ package ru.abradox.tokenservice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.abradox.client.token.request.CreateTokenPairRequest;
+import ru.abradox.client.token.request.CreateTokenRequest;
 import ru.abradox.dto.response.SimpleResponse;
 import ru.abradox.client.token.TokenDto;
 import ru.abradox.tokenservice.service.TokenService;
@@ -51,7 +51,7 @@ public class TokenController {
     }
 
     @PostMapping("/api/v1/token")
-    public SimpleResponse createToken(@RequestBody CreateTokenPairRequest request)
+    public SimpleResponse createToken(@RequestBody CreateTokenRequest request)
     {
         log.info("Начинаю процедуру создания токена по запросу {}", request);
         tokenService.createToken(request);

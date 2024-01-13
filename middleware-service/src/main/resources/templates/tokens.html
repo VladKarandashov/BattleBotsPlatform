@@ -23,5 +23,53 @@
     });
 </script>
 
+<br>
+<br>
+<form id="tokenForm" onsubmit="submitTokenForm(event)">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required pattern="^[a-zA-Zа-яА-Я0-9]{1,16}$"><br>
+
+    <label for="typeToken">Type Token:</label>
+    <select id="typeToken" name="typeToken" required>
+        <option value="DEV">DEV</option>
+        <option value="PROD">PROD</option>
+    </select><br>
+
+    <button type="submit">Создать токен</button>
+</form>
+
+<script>
+    function submitTokenForm(event) {
+        event.preventDefault();
+
+        const form = document.getElementById('tokenForm');
+        const formData = new FormData(form);
+        const jsonBody = {};
+        formData.forEach((value, key) => {
+            jsonBody[key] = value;
+        });
+        const jsonBodyStr = JSON.stringify(jsonBody);
+
+        fetch('/middleware/api/v1/token', {
+            method: 'POST',
+            body: jsonBodyStr,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Token request sent successfully');
+                } else {
+                    alert('Failed to send token request');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send token request');
+            });
+    }
+</script>
+
 </body>
 </html>

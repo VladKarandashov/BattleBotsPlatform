@@ -1,7 +1,7 @@
 package ru.abradox.tokenservice.service;
 
 import ru.abradox.client.token.TokenDto;
-import ru.abradox.client.token.request.CreateTokenPairRequest;
+import ru.abradox.client.token.request.CreateTokenRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,5 +16,5 @@ public interface TokenService {
 
     List<TokenDto> getToken(String title);
 
-    void createToken(CreateTokenPairRequest request);
+    void createToken(CreateTokenRequest request);
 }

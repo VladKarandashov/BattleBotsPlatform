@@ -8,7 +8,7 @@ import ru.abradox.client.token.TypeToken;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateTokenPairRequest {
+public class CreateTokenRequest {
 
     private Integer userId;
 

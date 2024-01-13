@@ -19,6 +19,6 @@ public interface TokenRepository extends JpaRepository<TokenEntity, UUID> {
 
     Integer countAllByUserIdAndType(Integer userId, TypeToken typeToken);
 
-    Boolean existsByTitleAndType(String title, TypeToken typeToken);
+    Boolean existsByTitle(String title);
 
 }

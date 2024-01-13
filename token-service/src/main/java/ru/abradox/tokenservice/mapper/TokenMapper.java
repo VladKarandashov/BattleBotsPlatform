@@ -7,7 +7,7 @@ import ru.abradox.tokenservice.entity.TokenEntity;
 
 import java.util.List;
 
-@Mapper(componentModel = "Spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface TokenMapper {
 
     TokenDto mapTokenEntityToTokenDto(TokenEntity tokenEntity);
