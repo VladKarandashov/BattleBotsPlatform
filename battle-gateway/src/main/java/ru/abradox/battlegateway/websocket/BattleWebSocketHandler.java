@@ -1,5 +1,6 @@
 package ru.abradox.battlegateway.websocket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketSession;
@@ -10,6 +11,7 @@ import ru.abradox.battlegateway.service.BattleConnectionsService;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Component
 public class BattleWebSocketHandler implements WebSocketHandler {
 
@@ -28,6 +30,7 @@ public class BattleWebSocketHandler implements WebSocketHandler {
         var botNameHeader = headers.getFirst("botName");
         var botTokenHeader = headers.getFirst("botToken");
         if (!authService.checkBotAccess(botNameHeader, botTokenHeader)) {
+            log.info("Бот [{} {}] не прошёл аутентификацию", botNameHeader, botTokenHeader);
             return session.close(); // Закрываем соединение, если проверка не прошла
         }
         var botToken = UUID.fromString(Objects.requireNonNull(botTokenHeader));
@@ -39,7 +42,10 @@ public class BattleWebSocketHandler implements WebSocketHandler {
                     String userMessage = message.getPayloadAsText();
                     connectionsService.handleUserMessage(botToken, userMessage);
                 })
-                .doOnTerminate(() -> connectionsService.closeConnection(botToken)) // Удаляем соединение при его закрытии
+                .doOnTerminate(() -> {
+                    log.info("Произошёл terminate");
+                    connectionsService.closeConnection(botToken);
+                })
                 .then();
     }
 }

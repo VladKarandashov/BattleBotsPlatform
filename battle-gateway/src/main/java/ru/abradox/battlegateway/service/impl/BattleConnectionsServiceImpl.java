@@ -51,10 +51,11 @@ public class BattleConnectionsServiceImpl implements BattleConnectionsService {
     @Override
     public void closeConnection(UUID botToken) {
         if (connections.containsKey(botToken)) {
+            log.info("Закрываю соединение с {}", botToken);
             var session = connections.get(botToken);
             session.close().subscribe();
+            connections.remove(botToken);
         }
-        connections.remove(botToken);
     }
 
     @Override
@@ -66,6 +67,7 @@ public class BattleConnectionsServiceImpl implements BattleConnectionsService {
                 closeConnection(uuid);
             }
         });
+        log.info("Подключено {} ботов", connections.size());
     }
 
     @Override
@@ -73,10 +75,9 @@ public class BattleConnectionsServiceImpl implements BattleConnectionsService {
     @Scheduled(fixedRate = 5 * 1000)
     // FIXME удалить
     public void spamMessages() {
-        getRandomUserId().ifPresentOrElse(botToken -> {
-            sendMessageToUser(botToken, "test message");
-            log.info("Отправил сообщение");
-        }, () -> log.info("Нет подключенного пользователя"));
+        getRandomUserId().ifPresentOrElse(
+                botToken -> sendMessageToUser(botToken, "test message"),
+                () -> log.info("Нет подключенного пользователя"));
     }
 
     // FIXME удалить
