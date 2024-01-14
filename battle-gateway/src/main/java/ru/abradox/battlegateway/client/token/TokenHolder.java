@@ -1,9 +1,8 @@
-package ru.abradox.battlegateway.service.impl;
+package ru.abradox.battlegateway.client.token;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.abradox.battlegateway.client.token.TokenClient;
 import ru.abradox.client.token.TokenDto;
 
 import java.util.Map;

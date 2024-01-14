@@ -7,7 +7,7 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
 import ru.abradox.battlegateway.service.MessageService;
-import ru.abradox.battlegateway.service.impl.TokenHolder;
+import ru.abradox.battlegateway.client.token.TokenHolder;
 
 import java.util.Objects;
 import java.util.Optional;

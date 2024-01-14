@@ -16,7 +16,7 @@ public class WsProducerTestService {
     @Async
     @Scheduled(fixedRate = 5 * 1000)
     // FIXME удалить
-    public void start() {
+    public void spamMessages() {
         battleWebSocketHandler.getRandomUserId().ifPresentOrElse(botToken -> {
             battleWebSocketHandler.sendMessageToUser(botToken, "test message");
             log.info("Отправил сообщение");
