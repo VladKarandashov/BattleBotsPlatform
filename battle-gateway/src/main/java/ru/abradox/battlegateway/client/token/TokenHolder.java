@@ -1,5 +1,6 @@
 package ru.abradox.battlegateway.client.token;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class TokenHolder {
 
@@ -26,8 +28,16 @@ public class TokenHolder {
         return tokens.containsKey(botToken) && botName.equalsIgnoreCase(tokens.get(botToken).getTitle());
     }
 
+    public boolean isNotTokenExist(String botName, UUID botToken) {
+        return !isTokenExist(botName, botToken);
+    }
+
     public boolean isTokenExist(UUID botToken) {
         return tokens.containsKey(botToken);
+    }
+
+    public boolean isNotTokenExist(UUID botToken) {
+        return !isTokenExist(botToken);
     }
 
     public Optional<TokenDto> getTokenInfo(UUID botToken) {
@@ -46,6 +56,7 @@ public class TokenHolder {
                     ));
                     tokens.keySet().removeIf(id -> !responseTokensMap.containsKey(id));
                     tokens.putAll(responseTokensMap);
+                    log.info("Успешно получены активные токены");
                 })
                 .subscribe();
     }

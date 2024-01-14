@@ -18,7 +18,7 @@ public class AuthServiceImpl implements AuthService {
     private final TokenHolder tokenHolder;
 
     @Override
-    public boolean checkBot(String botName, String botToken) {
+    public boolean checkBotAccess(String botName, String botToken) {
         if (StringUtils.isBlank(botName)) return false;
         if (StringUtils.isBlank(botToken)) return false;
         return parseUUID(botToken)

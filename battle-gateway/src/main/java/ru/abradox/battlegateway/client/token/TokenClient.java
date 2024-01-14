@@ -23,7 +23,6 @@ public class TokenClient {
         return webClient.get()
                 .uri(uri + "/api/v1/token")
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<TokenDto>>() {})
-                .log("Успешно получены активные токены");
+                .bodyToMono(new ParameterizedTypeReference<>() {});
     }
 }
