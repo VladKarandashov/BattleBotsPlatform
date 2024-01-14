@@ -32,6 +32,7 @@
         <postgresqlDriver.version>42.7.1</postgresqlDriver.version>
         <lombok.version>1.18.30</lombok.version>
         <lombokMapstruct.version>0.2.0</lombokMapstruct.version>
+        <springbootadmin.version>3.2.1</springbootadmin.version>
     </properties>
 
     <modules>
@@ -41,7 +42,7 @@
         <module>platform-utils</module>
         <module>platform-gateway</module>
         <module>battle-gateway</module>
-        <module>eureka-service</module>
+        <module>admin-service</module>
     </modules>
 
     <dependencyManagement>
@@ -129,6 +130,11 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
                 <version>${springCloudEurekaClient}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${springbootadmin.version}</version>
             </dependency>
 
             <dependency>
