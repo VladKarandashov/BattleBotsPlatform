@@ -16,15 +16,15 @@ import java.util.UUID;
 public class MessageServiceImpl implements MessageService {
 
     private final RabbitTemplate rabbitTemplate;
+    private final TokenHolder tokenHolder;
 
     @Override
     public boolean checkUser(String botName, String botToken) {
         if (StringUtils.isBlank(botName)) return false;
         if (StringUtils.isBlank(botToken)) return false;
-        var tokenOpt = parseUUID(botToken);
-        if (tokenOpt.isEmpty()) return false;
-        // TODO сделать запрос в сервис токенов с кэшем
-        return true;
+        return parseUUID(botToken)
+                .filter(uuid -> tokenHolder.isTokenExist(botName, uuid))
+                .isPresent();
     }
 
     @Override

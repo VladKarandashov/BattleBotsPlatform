@@ -1,9 +1,13 @@
 package ru.abradox.battlegateway.websocket;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
 import ru.abradox.battlegateway.service.MessageService;
+import ru.abradox.battlegateway.service.impl.TokenHolder;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -11,13 +15,16 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class WebSocketHandler implements org.springframework.web.reactive.socket.WebSocketHandler {
+public class BattleWebSocketHandler implements WebSocketHandler {
 
     private final MessageService messageService;
+    private final TokenHolder tokenHolder;
+
     private final ConcurrentHashMap<UUID, WebSocketSession> connections = new ConcurrentHashMap<>();
 
-    public WebSocketHandler(MessageService messageService) {
+    public BattleWebSocketHandler(MessageService messageService, TokenHolder tokenHolder) {
         this.messageService = messageService;
+        this.tokenHolder = tokenHolder;
     }
 
     @Override
@@ -51,6 +58,18 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
         // Обработка случая, когда сессии нет, не представлена
     }
 
+    @Async
+    @Scheduled(fixedRate = 5 * 1000)
+    protected void clearConnections() {
+        connections.forEach((uuid, session) -> {
+            if (!tokenHolder.isTokenExist(uuid)) { // Проверяем, существует ли токен
+                session.close().subscribe(); // Закрываем WebSocketSession
+                connections.remove(uuid); // Удаляем соединение из connections
+            }
+        });
+    }
+
+    // FIXME удалить
     public Optional<UUID> getRandomUserId() {
         if (connections.isEmpty()) return Optional.empty();
         return Optional.of(connections.keys().nextElement());

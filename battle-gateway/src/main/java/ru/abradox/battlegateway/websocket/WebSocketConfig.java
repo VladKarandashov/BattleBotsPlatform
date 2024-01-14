@@ -24,9 +24,9 @@ public class WebSocketConfig {
     }
 
     @Bean
-    public SimpleUrlHandlerMapping handlerMapping(WebSocketHandler webSocketHandler) {
+    public SimpleUrlHandlerMapping handlerMapping(BattleWebSocketHandler battleWebSocketHandler) {
         Map<String, org.springframework.web.reactive.socket.WebSocketHandler> map = new HashMap<>();
-        map.put("/ws/battle", webSocketHandler);
+        map.put("/ws/battle", battleWebSocketHandler);
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setUrlMap(map);

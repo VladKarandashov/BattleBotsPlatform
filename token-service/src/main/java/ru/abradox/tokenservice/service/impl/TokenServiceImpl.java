@@ -61,7 +61,7 @@ public class TokenServiceImpl implements TokenService {
         }
 
         // проверяем существование бота с таким именем
-        var isTitleExist = tokenRepository.existsByTitle(botTitle);
+        var isTitleExist = tokenRepository.existsByTitleIgnoreCase(botTitle);
         if (isTitleExist) {
             throw new BusinessException(1000, "Бот с таким именем уже зарегистрирован");
         }
