@@ -1,1 +1,7 @@
-
+spring:
+  rabbitmq:
+    host: 82.97.244.140
+    port: 5672
+    username: gen_user
+    password: UllXbQ168mlP4567UIGIUhiofd
+    virtual-host: default_vhost
