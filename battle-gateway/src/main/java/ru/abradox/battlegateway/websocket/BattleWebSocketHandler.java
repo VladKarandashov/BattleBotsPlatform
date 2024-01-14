@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
+import ru.abradox.battlegateway.service.AuthService;
 import ru.abradox.battlegateway.service.MessageService;
 import ru.abradox.battlegateway.client.token.TokenHolder;
 
@@ -18,12 +19,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BattleWebSocketHandler implements WebSocketHandler {
 
     private final MessageService messageService;
+    private final AuthService authService;
     private final TokenHolder tokenHolder;
 
     private final ConcurrentHashMap<UUID, WebSocketSession> connections = new ConcurrentHashMap<>();
 
-    public BattleWebSocketHandler(MessageService messageService, TokenHolder tokenHolder) {
+    public BattleWebSocketHandler(MessageService messageService, AuthService authService, TokenHolder tokenHolder) {
         this.messageService = messageService;
+        this.authService = authService;
         this.tokenHolder = tokenHolder;
     }
 
@@ -33,7 +36,7 @@ public class BattleWebSocketHandler implements WebSocketHandler {
         var headers = session.getHandshakeInfo().getHeaders();
         var botNameHeader = headers.getFirst("botName");
         var botTokenHeader = headers.getFirst("botToken");
-        if (!messageService.checkUser(botNameHeader, botTokenHeader)) {
+        if (!authService.checkBot(botNameHeader, botTokenHeader)) {
             return session.close(); // Закрываем соединение, если проверка не прошла
         }
         var botToken = UUID.fromString(Objects.requireNonNull(botTokenHeader));
