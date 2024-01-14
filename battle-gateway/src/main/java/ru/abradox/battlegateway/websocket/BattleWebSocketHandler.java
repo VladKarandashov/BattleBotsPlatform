@@ -42,10 +42,7 @@ public class BattleWebSocketHandler implements WebSocketHandler {
                     String userMessage = message.getPayloadAsText();
                     connectionsService.handleUserMessage(botToken, userMessage);
                 })
-                .doOnTerminate(() -> {
-                    log.info("Произошёл terminate");
-                    connectionsService.closeConnection(botToken);
-                })
+                .doOnTerminate(() -> connectionsService.clearConnection(botToken))
                 .then();
     }
 }

@@ -14,6 +14,8 @@ public interface BattleConnectionsService {
 
     void closeConnection(UUID botToken);
 
+    void clearConnection(UUID botToken);
+
     void clearConnections();
 
     void spamMessages();

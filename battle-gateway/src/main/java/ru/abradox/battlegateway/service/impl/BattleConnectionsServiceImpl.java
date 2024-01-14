@@ -50,12 +50,15 @@ public class BattleConnectionsServiceImpl implements BattleConnectionsService {
 
     @Override
     public void closeConnection(UUID botToken) {
-        if (connections.containsKey(botToken)) {
-            log.info("Закрываю соединение с {}", botToken);
-            var session = connections.get(botToken);
-            session.close().subscribe();
-            connections.remove(botToken);
-        }
+        getConnection(botToken)
+                .ifPresent(session -> session.close().subscribe());
+    }
+
+    @Override
+    public void clearConnection(UUID botToken) {
+        getConnection(botToken)
+                .filter(session -> !session.isOpen())
+                .ifPresent(session -> connections.remove(botToken));
     }
 
     @Override
@@ -68,6 +71,10 @@ public class BattleConnectionsServiceImpl implements BattleConnectionsService {
             }
         });
         log.info("Подключено {} ботов", connections.size());
+    }
+
+    private Optional<WebSocketSession> getConnection(UUID botToken) {
+        return Optional.ofNullable(connections.get(botToken));
     }
 
     @Override
