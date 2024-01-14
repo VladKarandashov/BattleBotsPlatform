@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WsProducerTestService {
 
-    private final MessageWebSocketHandler messageWebSocketHandler;
+    private final WebSocketHandler webSocketHandler;
 
     @Async
     @Scheduled(fixedRate = 5 * 1000)
     public void start() {
-        messageWebSocketHandler.getRandomUserId().ifPresentOrElse(userId -> {
-            messageWebSocketHandler.sendMessageToUser(userId, "test message");
+        webSocketHandler.getRandomUserId().ifPresentOrElse(botToken -> {
+            webSocketHandler.sendMessageToUser(botToken, "test message");
             log.info("Отправил сообщение");
         }, () -> log.info("Нет подключенного пользователя"));
     }

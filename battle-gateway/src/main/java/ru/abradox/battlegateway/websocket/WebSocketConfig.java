@@ -3,7 +3,6 @@ package ru.abradox.battlegateway.websocket;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.server.WebSocketService;
 import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
@@ -25,9 +24,9 @@ public class WebSocketConfig {
     }
 
     @Bean
-    public SimpleUrlHandlerMapping handlerMapping(MessageWebSocketHandler messageWebSocketHandler) {
-        Map<String, WebSocketHandler> map = new HashMap<>();
-        map.put("/ws/battle", messageWebSocketHandler);
+    public SimpleUrlHandlerMapping handlerMapping(WebSocketHandler webSocketHandler) {
+        Map<String, org.springframework.web.reactive.socket.WebSocketHandler> map = new HashMap<>();
+        map.put("/ws/battle", webSocketHandler);
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setUrlMap(map);

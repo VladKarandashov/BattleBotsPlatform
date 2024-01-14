@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public interface MessageService {
 
-    boolean checkUser(String userName, UUID userId);
+    boolean checkUser(String botName, String botToken);
 
-    void handleUserMessage(UUID userId, String userMessage);
+    void handleUserMessage(UUID botToken, String userMessage);
 }
