@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.abradox.client.token.TokenDto;
 
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +55,7 @@ public class TokenHolder {
                     ));
                     tokens.keySet().removeIf(id -> !responseTokensMap.containsKey(id));
                     tokens.putAll(responseTokensMap);
-                    log.info("Успешно получены активные токены");
+                    log.info("Успешно получены активные токены [{}]", tokens.keySet());
                 })
                 .subscribe();
     }
