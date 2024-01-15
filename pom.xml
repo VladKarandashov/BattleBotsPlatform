@@ -38,6 +38,7 @@
     <modules>
         <module>crm-service</module>
         <module>token-service</module>
+        <module>statistic-service</module>
         <module>middleware-service</module>
         <module>platform-utils</module>
         <module>platform-api</module>
