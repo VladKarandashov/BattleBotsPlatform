@@ -26,6 +26,7 @@ public class BattleConnectionsServiceImpl implements BattleConnectionsService {
     private final TokenHolder tokenHolder;
 
     @Override
+    // TODO прикрутить res4j: rateLimiter и сообщение NOT SPAM
     public void handleUserMessage(UUID botToken, String userMessage) {
         log.info("От пользователя {} получено сообщение {}", botToken, userMessage);
         rabbitTemplate.convertAndSend("player-actions", "", userMessage);
