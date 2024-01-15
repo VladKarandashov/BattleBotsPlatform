@@ -2,9 +2,11 @@ package ru.abradox.battlegateway.service;
 
 import org.springframework.web.reactive.socket.WebSocketSession;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface BattleConnectionsService {
+public interface ConnectionService {
 
     void handleUserMessage(UUID botToken, String userMessage);
 
@@ -16,7 +18,7 @@ public interface BattleConnectionsService {
 
     void clearConnection(UUID botToken);
 
-    void clearConnections();
+    Optional<WebSocketSession> getConnection(UUID botToken);
 
-    void spamMessages();
+    Map<UUID, WebSocketSession> getConnections();
 }

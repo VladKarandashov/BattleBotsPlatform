@@ -44,7 +44,7 @@ public class TokenHolder {
     }
 
     @Async
-    @Scheduled(fixedRate = 2 * 1000)
+    @Scheduled(fixedRate = 1 * 1000)
     protected void updateTokens() {
         tokenClient.getNotBlockedTokens()
                 .doOnNext(responseTokens -> {

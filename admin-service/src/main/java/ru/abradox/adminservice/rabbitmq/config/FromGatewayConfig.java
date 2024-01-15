@@ -23,4 +23,21 @@ public class FromGatewayConfig {
     public Binding playerActionsBinding() {
         return BindingBuilder.bind(playerActionsQueue()).to(playerActionsExchange());
     }
+
+    @Bean
+    public Queue activeConnectionsQueue() {
+        return QueueBuilder.durable("active-connections")
+                .ttl(2*1000) // время жизни сообщения
+                .build();
+    }
+
+    @Bean
+    public FanoutExchange activeConnectionsExchange() {
+        return new FanoutExchange("active-connections");
+    }
+
+    @Bean
+    public Binding activeConnectionsBinding() {
+        return BindingBuilder.bind(playerActionsQueue()).to(playerActionsExchange());
+    }
 }

@@ -1,16 +1,15 @@
 package ru.abradox.battlegateway.service.impl;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
-import ru.abradox.battlegateway.client.token.TokenHolder;
-import ru.abradox.battlegateway.service.BattleConnectionsService;
+import ru.abradox.battlegateway.service.ConnectionService;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,12 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BattleConnectionsServiceImpl implements BattleConnectionsService {
+public class ConnectionServiceImpl implements ConnectionService {
 
-    private final ConcurrentHashMap<UUID, WebSocketSession> connections = new ConcurrentHashMap<>();
+    @Getter
+    private final Map<UUID, WebSocketSession> connections = new ConcurrentHashMap<>();
 
     private final RabbitTemplate rabbitTemplate;
-    private final TokenHolder tokenHolder;
 
     @Override
     // TODO прикрутить res4j: rateLimiter и сообщение NOT SPAM
@@ -62,35 +61,7 @@ public class BattleConnectionsServiceImpl implements BattleConnectionsService {
                 .ifPresent(session -> connections.remove(botToken));
     }
 
-    @Override
-    @Async
-    @Scheduled(fixedRate = 5 * 1000)
-    public void clearConnections() {
-        connections.forEach((uuid, session) -> {
-            if (tokenHolder.isNotTokenExist(uuid)) {
-                closeConnection(uuid);
-            }
-        });
-        log.info("Подключено {} ботов", connections.size());
-    }
-
-    private Optional<WebSocketSession> getConnection(UUID botToken) {
+    public Optional<WebSocketSession> getConnection(UUID botToken) {
         return Optional.ofNullable(connections.get(botToken));
-    }
-
-    @Override
-    @Async
-    @Scheduled(fixedRate = 5 * 1000)
-    // FIXME удалить
-    public void spamMessages() {
-        getRandomUserId().ifPresentOrElse(
-                botToken -> sendMessageToUser(botToken, "test message"),
-                () -> log.info("Нет подключенного пользователя"));
-    }
-
-    // FIXME удалить
-    private Optional<UUID> getRandomUserId() {
-        if (connections.isEmpty()) return Optional.empty();
-        return Optional.of(connections.keys().nextElement());
     }
 }

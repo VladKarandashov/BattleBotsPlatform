@@ -6,7 +6,7 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
 import ru.abradox.battlegateway.service.AuthService;
-import ru.abradox.battlegateway.service.BattleConnectionsService;
+import ru.abradox.battlegateway.service.ConnectionService;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -15,11 +15,11 @@ import java.util.UUID;
 @Component
 public class BattleWebSocketHandler implements WebSocketHandler {
 
-    private final BattleConnectionsService connectionsService;
+    private final ConnectionService connectionService;
     private final AuthService authService;
 
-    public BattleWebSocketHandler(BattleConnectionsService connectionsService, AuthService authService) {
-        this.connectionsService = connectionsService;
+    public BattleWebSocketHandler(ConnectionService connectionService, AuthService authService) {
+        this.connectionService = connectionService;
         this.authService = authService;
     }
 
@@ -35,14 +35,14 @@ public class BattleWebSocketHandler implements WebSocketHandler {
         }
         var botToken = UUID.fromString(Objects.requireNonNull(botTokenHeader));
 
-        connectionsService.putConnection(botToken, session);
+        connectionService.putConnection(botToken, session);
 
         return session.receive() // Получаем сообщения от пользователя
                 .doOnNext(message -> {
                     String userMessage = message.getPayloadAsText();
-                    connectionsService.handleUserMessage(botToken, userMessage);
+                    connectionService.handleUserMessage(botToken, userMessage);
                 })
-                .doOnTerminate(() -> connectionsService.clearConnection(botToken))
+                .doOnTerminate(() -> connectionService.clearConnection(botToken))
                 .then();
     }
 }
