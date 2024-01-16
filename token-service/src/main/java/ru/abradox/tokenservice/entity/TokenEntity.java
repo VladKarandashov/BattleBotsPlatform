@@ -17,7 +17,7 @@ import java.util.UUID;
 public class TokenEntity {
 
     @Id
-    @Column(name = "id", columnDefinition = "BINARY(16)")
+    @Column(name = "id", columnDefinition = "UUID")
     @GeneratedValue(generator = "uuid-hibernate-generator")
     @UuidGenerator
     private UUID id;

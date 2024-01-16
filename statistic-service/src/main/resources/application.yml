@@ -1,1 +1,28 @@
+server:
+  port: 8084
 
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://94.241.138.243:5432/default_db
+    username: gen_user
+    password: HWv6Yo4bIwI3FJjlk4357JHK
+  liquibase:
+    enabled: false # FIXME заменить на true
+    changeLog: classpath:db/changelog/db.changelog-master.xml
+  jpa:
+    showSql: false
+    hibernate:
+      ddl-auto: create # FIXME заменить на VALIDATE
+    properties:
+      hibernate:
+        default_schema: public
+    database: postgresql
+  application:
+    name: statistic-service
+  rabbitmq:
+    host: 82.97.244.140
+    port: 5672
+    username: gen_user
+    password: UllXbQ168mlP4567UIGIUhiofd
+    virtual-host: default_vhost

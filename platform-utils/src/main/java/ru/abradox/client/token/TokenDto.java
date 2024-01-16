@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,7 +19,11 @@ public class TokenDto {
 
     private String title;
 
-    private String type;
+    private TypeToken type;
 
     private boolean blocked;
+
+    public UUID getUid() {
+        return UUID.fromString(id);
+    }
 }
