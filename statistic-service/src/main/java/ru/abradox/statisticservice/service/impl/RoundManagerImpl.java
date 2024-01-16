@@ -6,6 +6,7 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.abradox.statisticservice.service.RoundManager;
+import ru.abradox.statisticservice.service.RoundService;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,12 +15,14 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RoundManagerImpl implements RoundManager {
 
+    private final RoundService roundService;
+
     @Override
     @SchedulerLock(name = "startDevRounds", lockAtMostFor = "9s", lockAtLeastFor = "9s")
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
     public void startDevRounds() {
-        log.warn("Запустил процесс создания новых DEV партий");
-
-        log.warn("Завершил процесс создания новых DEV партий");
+        log.info("Запустил процесс создания новых DEV партий");
+        roundService.startDevRounds();
+        log.info("Завершил процесс создания новых DEV партий");
     }
 }

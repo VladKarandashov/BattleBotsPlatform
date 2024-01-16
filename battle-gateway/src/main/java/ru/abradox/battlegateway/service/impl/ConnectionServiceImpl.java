@@ -28,7 +28,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     // TODO прикрутить res4j: rateLimiter и сообщение NOT SPAM
     public void handleUserMessage(UUID botToken, String userMessage) {
         log.info("От пользователя {} получено сообщение {}", botToken, userMessage);
-        rabbitTemplate.convertAndSend("player-actions", "", userMessage);
+        rabbitTemplate.convertAndSend("bot-actions", "", userMessage);
     }
 
     @Override

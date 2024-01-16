@@ -8,20 +8,20 @@ import org.springframework.context.annotation.Configuration;
 public class FromGatewayConfig {
 
     @Bean
-    public Queue playerActionsQueue() {
-        return QueueBuilder.durable("player-actions")
+    public Queue botActionsQueue() {
+        return QueueBuilder.durable("bot-actions")
                 .ttl(5*1000) // время жизни сообщения
                 .build();
     }
 
     @Bean
-    public FanoutExchange playerActionsExchange() {
-        return new FanoutExchange("player-actions");
+    public FanoutExchange botActionsExchange() {
+        return new FanoutExchange("bot-actions");
     }
 
     @Bean
-    public Binding playerActionsBinding() {
-        return BindingBuilder.bind(playerActionsQueue()).to(playerActionsExchange());
+    public Binding botActionsBinding() {
+        return BindingBuilder.bind(botActionsQueue()).to(botActionsExchange());
     }
 
     @Bean

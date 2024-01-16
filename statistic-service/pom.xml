@@ -50,6 +50,12 @@
 
 		<dependency>
 			<groupId>ru.abradox</groupId>
+			<artifactId>platform-api</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ru.abradox</groupId>
 			<artifactId>platform-utils</artifactId>
 			<version>0.0.1</version>
 		</dependency>

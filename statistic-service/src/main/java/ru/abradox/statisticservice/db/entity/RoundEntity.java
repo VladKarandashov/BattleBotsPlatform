@@ -25,11 +25,11 @@ public class RoundEntity {
     @UuidGenerator
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "top_bot_id", referencedColumnName = "id")
     private BotEntity topBot;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "down_bot_id", referencedColumnName = "id")
     private BotEntity downBot;
 
