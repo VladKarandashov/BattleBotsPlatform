@@ -38,6 +38,6 @@ public class FromGatewayConfig {
 
     @Bean
     public Binding activeConnectionsBinding() {
-        return BindingBuilder.bind(playerActionsQueue()).to(playerActionsExchange());
+        return BindingBuilder.bind(activeConnectionsQueue()).to(activeConnectionsExchange());
     }
 }
