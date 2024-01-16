@@ -8,7 +8,7 @@ spring:
     username: gen_user
     password: HWv6Yo4bIwI3FJjlk4357JHK
   liquibase:
-    enabled: false # FIXME заменить на true
+    enabled: true
     changeLog: classpath:db/changelog/db.changelog-master.xml
   jpa:
     showSql: false

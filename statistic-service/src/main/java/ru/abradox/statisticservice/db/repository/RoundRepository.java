@@ -1,7 +1,7 @@
-package ru.abradox.statisticservice.repository;
+package ru.abradox.statisticservice.db.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.abradox.statisticservice.entity.RoundEntity;
+import ru.abradox.statisticservice.db.entity.RoundEntity;
 
 import java.util.UUID;
 

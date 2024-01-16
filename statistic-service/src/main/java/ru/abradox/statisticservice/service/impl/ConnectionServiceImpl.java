@@ -1,12 +1,13 @@
-package ru.abradox.statisticservice.service;
+package ru.abradox.statisticservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.token.TokenDto;
-import ru.abradox.statisticservice.entity.BotEntity;
-import ru.abradox.statisticservice.repository.BotRepository;
+import ru.abradox.statisticservice.db.entity.BotEntity;
+import ru.abradox.statisticservice.db.repository.BotRepository;
+import ru.abradox.statisticservice.service.ConnectionService;
 
 import java.util.List;
 import java.util.UUID;

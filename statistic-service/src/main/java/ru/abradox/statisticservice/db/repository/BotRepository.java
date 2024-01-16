@@ -1,9 +1,9 @@
-package ru.abradox.statisticservice.repository;
+package ru.abradox.statisticservice.db.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import ru.abradox.statisticservice.entity.BotEntity;
+import ru.abradox.statisticservice.db.entity.BotEntity;
 
 import java.util.Set;
 import java.util.UUID;
