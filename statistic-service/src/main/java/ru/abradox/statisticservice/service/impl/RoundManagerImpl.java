@@ -18,11 +18,20 @@ public class RoundManagerImpl implements RoundManager {
     private final RoundService roundService;
 
     @Override
-    @SchedulerLock(name = "startDevRounds", lockAtMostFor = "9s", lockAtLeastFor = "9s")
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @SchedulerLock(name = "startDevRounds", lockAtMostFor = "9s", lockAtLeastFor = "9s")
     public void startDevRounds() {
         log.info("Запустил процесс создания новых DEV партий");
         roundService.startDevRounds();
         log.info("Завершил процесс создания новых DEV партий");
+    }
+
+    @Override
+    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
+    @SchedulerLock(name = "validateRounds", lockAtMostFor = "4m", lockAtLeastFor = "4m")
+    public void validateRounds() {
+        log.info("Начинаю валидацию партий");
+        roundService.validateRounds();
+        log.info("Завершил валидацию партий");
     }
 }

@@ -1,4 +1,4 @@
-package ru.abradox.platformapi.game;
+package ru.abradox.platformapi.game.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

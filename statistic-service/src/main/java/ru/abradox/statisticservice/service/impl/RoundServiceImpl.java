@@ -8,8 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.statistic.StatusRound;
 import ru.abradox.client.statistic.TypeRound;
 import ru.abradox.client.token.TypeToken;
-import ru.abradox.platformapi.game.FinishRound;
-import ru.abradox.platformapi.game.StartRound;
+import ru.abradox.platformapi.game.event.FinishRound;
+import ru.abradox.platformapi.game.event.StartRound;
+import ru.abradox.platformapi.game.event.WantedRound;
 import ru.abradox.statisticservice.db.entity.BotEntity;
 import ru.abradox.statisticservice.db.entity.RoundEntity;
 import ru.abradox.statisticservice.db.repository.BotRepository;
@@ -64,8 +65,8 @@ public class RoundServiceImpl implements RoundService {
 
     @Override
     @Transactional
-    public void finishRound(FinishRound finishRound) {
-        var id = finishRound.getId();
+    public void finishRound(FinishRound finishRoundRequest) {
+        var id = finishRoundRequest.getId();
         roundRepository.findById(id).ifPresent(round -> {
             var type = round.getType();
             if (TypeRound.DEV.equals(type)) {
@@ -78,6 +79,20 @@ public class RoundServiceImpl implements RoundService {
             } else if (TypeRound.PROD.equals(type)) {
                 // TODO завершение PROD раунда
             }
+        });
+    }
+
+    @Override
+    @Transactional
+    public void validateRounds() {
+        // ищем не завершённую партию status, которая продолжается более двух минут
+        var beforeTime = LocalDateTime.now().minusMinutes(2);
+        var oldRounds = roundRepository.findRoundsByStatusBeforeGivenTime(StatusRound.PROGRESS, beforeTime);
+        oldRounds.forEach(round -> {
+            var bot1 = round.getTopBot();
+            var bot2 = round.getTopBot();
+            rabbitTemplate.convertAndSend("wanted-round", "",
+                    new WantedRound(round.getId(), DEV, bot1.getToken(), bot2.getToken()));
         });
     }
 }

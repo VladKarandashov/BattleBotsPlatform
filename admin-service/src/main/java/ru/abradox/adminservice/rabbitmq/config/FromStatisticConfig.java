@@ -10,7 +10,6 @@ public class FromStatisticConfig {
     @Bean
     public Queue startRoundQueue() {
         return QueueBuilder.durable("start-round")
-                .ttl(10*1000) // время жизни сообщения
                 .build();
     }
 
@@ -22,5 +21,22 @@ public class FromStatisticConfig {
     @Bean
     public Binding startRoundBinding() {
         return BindingBuilder.bind(startRoundQueue()).to(startRoundExchange());
+    }
+
+    @Bean
+    public Queue wantedRoundQueue() {
+        return QueueBuilder.durable("wanted-round")
+                .ttl(4*1000) // время жизни сообщения
+                .build();
+    }
+
+    @Bean
+    public FanoutExchange wantedRoundExchange() {
+        return new FanoutExchange("wanted-round");
+    }
+
+    @Bean
+    public Binding wantedRoundBinding() {
+        return BindingBuilder.bind(wantedRoundQueue()).to(wantedRoundExchange());
     }
 }
