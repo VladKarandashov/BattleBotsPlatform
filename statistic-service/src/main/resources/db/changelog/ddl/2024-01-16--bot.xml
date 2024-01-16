@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-table-bot" author="karandashov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="bot"/>
+            </not>
+        </preConditions>
+
+        <comment>Create table bot</comment>
+
+        <createTable tableName="bot">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="user_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="UUID">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="type" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="position" type="INTEGER"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="is_play" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="bot"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="bot-sequence-id" author="karandashov">
+        <preConditions>
+            <tableExists tableName="bot"/>
+            <columnExists tableName="bot" columnName="id"/>
+            <not>
+                <sequenceExists sequenceName="bot_seq_id"/>
+            </not>
+        </preConditions>
+
+        <comment>Create a sequence for table bot</comment>
+
+        <createSequence
+                sequenceName="bot_seq_id"
+                incrementBy="1"
+                minValue="1"
+                startValue="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="bot_seq_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create-index-in-table-bot" author="karandashov">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="bot"/>
+            <columnExists tableName="bot" columnName="token"/>
+            <columnExists tableName="bot" columnName="type"/>
+            <not>
+                <indexExists tableName="bot" columnNames="token"/>
+                <indexExists tableName="bot" columnNames="type"/>
+            </not>
+        </preConditions>
+
+        <comment>Create index for table bot</comment>
+
+        <createIndex tableName="bot" indexName="idx_bot_token">
+            <column name="token"/>
+        </createIndex>
+        <createIndex tableName="bot" indexName="idx_bot_type">
+            <column name="type"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="bot" indexName="idx_bot_token"/>
+            <dropIndex tableName="bot" indexName="idx_bot_type"/>
+        </rollback>
+    </changeSet>
+    
+</databaseChangeLog>

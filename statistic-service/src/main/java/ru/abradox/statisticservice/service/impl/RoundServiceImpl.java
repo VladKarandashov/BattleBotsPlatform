@@ -67,7 +67,7 @@ public class RoundServiceImpl implements RoundService {
     @Transactional
     public void finishRound(FinishRound finishRoundRequest) {
         var id = finishRoundRequest.getId();
-        roundRepository.findById(id).ifPresent(round -> {
+        roundRepository.findByIdWithBots(id).ifPresent(round -> {
             var type = round.getType();
             if (TypeRound.DEV.equals(type)) {
                 var bot1 = round.getTopBot();

@@ -13,7 +13,7 @@ spring:
   jpa:
     showSql: false
     hibernate:
-      ddl-auto: create # FIXME заменить на VALIDATE
+      ddl-auto: validate
     properties:
       hibernate:
         default_schema: public
