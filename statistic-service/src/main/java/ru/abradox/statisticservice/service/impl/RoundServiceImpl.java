@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.statistic.StatusRound;
 import ru.abradox.client.statistic.TypeRound;
 import ru.abradox.client.token.TypeToken;
+import ru.abradox.platformapi.game.FinishRound;
 import ru.abradox.platformapi.game.StartRound;
 import ru.abradox.statisticservice.db.entity.BotEntity;
 import ru.abradox.statisticservice.db.entity.RoundEntity;
@@ -16,6 +17,7 @@ import ru.abradox.statisticservice.db.repository.RoundRepository;
 import ru.abradox.statisticservice.service.RoundService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.abradox.platformapi.game.TypeRound.DEV;
@@ -58,6 +60,24 @@ public class RoundServiceImpl implements RoundService {
             rabbitTemplate.convertAndSend("start-round", "",
                     new StartRound(round.getId(), DEV, bot1.getToken(), bot2.getToken()));
         });
+    }
 
+    @Override
+    @Transactional
+    public void finishRound(FinishRound finishRound) {
+        var id = finishRound.getId();
+        roundRepository.findById(id).ifPresent(round -> {
+            var type = round.getType();
+            if (TypeRound.DEV.equals(type)) {
+                var bot1 = round.getTopBot();
+                var bot2 = round.getDownBot();
+                bot1.setIsPlay(false);
+                bot2.setIsPlay(false);
+                botRepository.saveAll(List.of(bot1, bot2));
+                roundRepository.delete(round);
+            } else if (TypeRound.PROD.equals(type)) {
+                // TODO завершение PROD раунда
+            }
+        });
     }
 }
