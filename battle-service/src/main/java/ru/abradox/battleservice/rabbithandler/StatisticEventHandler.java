@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.abradox.battleservice.service.RoundService;
-import ru.abradox.platformapi.game.event.StartRound;
-import ru.abradox.platformapi.game.event.WantedRound;
+import ru.abradox.platformapi.battle.event.StartRound;
+import ru.abradox.platformapi.battle.event.WantedRound;
 
 @Slf4j
 @Component

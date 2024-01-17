@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.statistic.StatusRound;
 import ru.abradox.client.token.TypeToken;
-import ru.abradox.platformapi.game.TypeRound;
-import ru.abradox.platformapi.game.event.FinishRound;
-import ru.abradox.platformapi.game.event.StartRound;
-import ru.abradox.platformapi.game.event.WantedRound;
+import ru.abradox.platformapi.battle.TypeRound;
+import ru.abradox.platformapi.battle.event.FinishRound;
+import ru.abradox.platformapi.battle.event.StartRound;
+import ru.abradox.platformapi.battle.event.WantedRound;
 import ru.abradox.statisticservice.model.entity.BotEntity;
 import ru.abradox.statisticservice.model.entity.RoundEntity;
 import ru.abradox.statisticservice.model.repository.BotRepository;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.abradox.platformapi.game.TypeRound.DEV;
+import static ru.abradox.platformapi.battle.TypeRound.DEV;
 
 @Slf4j
 @Service

@@ -1,6 +1,6 @@
 package ru.abradox.statisticservice.service;
 
-import ru.abradox.platformapi.game.event.FinishRound;
+import ru.abradox.platformapi.battle.event.FinishRound;
 
 public interface RoundService {
 

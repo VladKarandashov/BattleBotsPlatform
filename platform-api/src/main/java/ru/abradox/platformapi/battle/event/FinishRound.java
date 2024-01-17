@@ -1,9 +1,9 @@
-package ru.abradox.platformapi.game.event;
+package ru.abradox.platformapi.battle.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.abradox.platformapi.game.ResultRound;
+import ru.abradox.platformapi.battle.ResultRound;
 
 import java.util.UUID;
 

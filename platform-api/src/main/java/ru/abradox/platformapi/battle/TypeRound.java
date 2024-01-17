@@ -1,4 +1,4 @@
-package ru.abradox.platformapi.game;
+package ru.abradox.platformapi.battle;
 
 public enum TypeRound {
     DEV, PROD

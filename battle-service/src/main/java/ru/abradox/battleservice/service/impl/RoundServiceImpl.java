@@ -5,12 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import ru.abradox.battleservice.model.RoundRepository;
+import ru.abradox.battleservice.service.GameService;
 import ru.abradox.battleservice.service.RoundService;
-import ru.abradox.platformapi.game.ResultRound;
-import ru.abradox.platformapi.game.TypeRound;
-import ru.abradox.platformapi.game.event.FinishRound;
-import ru.abradox.platformapi.game.event.StartRound;
-import ru.abradox.platformapi.game.event.WantedRound;
+import ru.abradox.platformapi.battle.ResultRound;
+import ru.abradox.platformapi.battle.TypeRound;
+import ru.abradox.platformapi.battle.event.FinishRound;
+import ru.abradox.platformapi.battle.event.StartRound;
+import ru.abradox.platformapi.battle.event.WantedRound;
 
 @Slf4j
 @Component
@@ -19,10 +20,13 @@ public class RoundServiceImpl implements RoundService {
 
     private final RoundRepository roundRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final GameService gameService;
 
     @Override
     public void startRound(StartRound startRoundEvent) {
-
+        var roundId = startRoundEvent.getId();
+        roundRepository.findById(roundId).ifPresent(round -> wantedRound(new WantedRound(startRoundEvent)));
+        gameService.startRound(startRoundEvent);
     }
 
     @Override
@@ -45,7 +49,7 @@ public class RoundServiceImpl implements RoundService {
             // посмотрим на результат раунда
             var result = round.getResult();
             if (result != null) {
-                // раунд уже закончен, пере-отправляем событие о завершении
+                // если раунд уже закончен, пере-отправляем событие о завершении
                 rabbitTemplate.convertAndSend("finish-round", "", new FinishRound(roundId, result));
             }
         }
