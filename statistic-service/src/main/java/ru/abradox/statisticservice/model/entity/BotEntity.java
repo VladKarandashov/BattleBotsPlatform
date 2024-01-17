@@ -1,4 +1,4 @@
-package ru.abradox.statisticservice.db.entity;
+package ru.abradox.statisticservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

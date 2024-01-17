@@ -1,9 +1,9 @@
-package ru.abradox.statisticservice.db.repository;
+package ru.abradox.statisticservice.model.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.abradox.client.statistic.StatusRound;
-import ru.abradox.statisticservice.db.entity.RoundEntity;
+import ru.abradox.statisticservice.model.entity.RoundEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

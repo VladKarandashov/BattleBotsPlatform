@@ -11,10 +11,10 @@ import ru.abradox.client.token.TypeToken;
 import ru.abradox.platformapi.game.event.FinishRound;
 import ru.abradox.platformapi.game.event.StartRound;
 import ru.abradox.platformapi.game.event.WantedRound;
-import ru.abradox.statisticservice.db.entity.BotEntity;
-import ru.abradox.statisticservice.db.entity.RoundEntity;
-import ru.abradox.statisticservice.db.repository.BotRepository;
-import ru.abradox.statisticservice.db.repository.RoundRepository;
+import ru.abradox.statisticservice.model.entity.BotEntity;
+import ru.abradox.statisticservice.model.entity.RoundEntity;
+import ru.abradox.statisticservice.model.repository.BotRepository;
+import ru.abradox.statisticservice.model.repository.RoundRepository;
 import ru.abradox.statisticservice.service.RoundService;
 
 import java.time.LocalDateTime;

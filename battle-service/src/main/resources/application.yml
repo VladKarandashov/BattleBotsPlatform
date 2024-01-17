@@ -4,6 +4,15 @@ server:
 spring:
   application:
     name: battle-service
+  data:
+    redis:
+      database: 0
+      host: 82.97.255.239
+      port: 6379
+      password: WXamUD1CUJnuBKLdjvf23
+      timeout: 10000
+      username: default
+
   rabbitmq:
     host: 82.97.244.140
     port: 5672
