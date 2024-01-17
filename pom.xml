@@ -45,6 +45,7 @@
         <module>platform-api</module>
         <module>platform-gateway</module>
         <module>battle-gateway</module>
+        <module>battle-service</module>
         <module>admin-service</module>
     </modules>
 

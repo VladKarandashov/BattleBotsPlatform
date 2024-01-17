@@ -27,8 +27,8 @@ public class RoundManagerImpl implements RoundManager {
     }
 
     @Override
-    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
-    @SchedulerLock(name = "validateRounds", lockAtMostFor = "4m", lockAtLeastFor = "4m")
+    @Scheduled(fixedDelay = 3, timeUnit = TimeUnit.MINUTES)
+    @SchedulerLock(name = "validateRounds", lockAtMostFor = "2m", lockAtLeastFor = "2m")
     public void validateRounds() {
         log.info("Начинаю валидацию партий");
         roundService.validateRounds();
