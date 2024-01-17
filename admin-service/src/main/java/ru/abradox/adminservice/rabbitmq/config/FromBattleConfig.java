@@ -22,4 +22,20 @@ public class FromBattleConfig {
     public Binding finishRoundBinding() {
         return BindingBuilder.bind(finishRoundQueue()).to(finishRoundExchange());
     }
+
+    @Bean
+    public Queue botResponseQueue() {
+        return QueueBuilder.durable("bot-response")
+                .build();
+    }
+
+    @Bean
+    public FanoutExchange botResponseExchange() {
+        return new FanoutExchange("bot-response");
+    }
+
+    @Bean
+    public Binding botResponseBinding() {
+        return BindingBuilder.bind(botResponseQueue()).to(botResponseExchange());
+    }
 }

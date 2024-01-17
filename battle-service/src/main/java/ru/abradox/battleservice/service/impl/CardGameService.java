@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 import ru.abradox.battleservice.model.RoundRepository;
 import ru.abradox.battleservice.model.RoundState;
 import ru.abradox.battleservice.service.GameService;
+import ru.abradox.platformapi.battle.BotWrapper;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.cardgame.CardDto;
+import ru.abradox.platformapi.cardgame.event.ServerResponse;
+import ru.abradox.platformapi.cardgame.event.StatusCode;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -27,7 +30,12 @@ public class CardGameService implements GameService {
     public void startRound(StartRound startRoundEvent) {
         var round = createRound(startRoundEvent);
         round = roundRepository.save(round);
-        // TODO генерация ответов для игроков
+        var infoMap = round.getStateInfo();
+        infoMap.forEach((key, value) -> {
+            var serverResponse = new ServerResponse(StatusCode.START_ROUND, value);
+            var response = new BotWrapper<>(key, serverResponse);
+            rabbitTemplate.convertAndSend("bot-response", "", response);
+        });
     }
 
     private RoundState createRound(StartRound event) {
