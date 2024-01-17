@@ -31,6 +31,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <thymeleafExtrasSpringsecurity6.version>3.1.2.RELEASE</thymeleafExtrasSpringsecurity6.version>
         <postgresqlDriver.version>42.7.1</postgresqlDriver.version>
+        <redisson.version>3.25.2</redisson.version>
         <lombok.version>1.18.30</lombok.version>
         <lombokMapstruct.version>0.2.0</lombokMapstruct.version>
         <springbootadmin.version>3.2.1</springbootadmin.version>
@@ -78,6 +79,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${springBoot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
