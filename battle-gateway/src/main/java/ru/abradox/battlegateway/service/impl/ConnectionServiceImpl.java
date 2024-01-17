@@ -1,13 +1,16 @@
 package ru.abradox.battlegateway.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
 import ru.abradox.battlegateway.service.ConnectionService;
+import ru.abradox.platformapi.cardgame.event.ServerResponse;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +24,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Getter
     private final Map<UUID, WebSocketSession> connections = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -32,10 +36,11 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
     @Override
-    public void sendMessageToUser(UUID botToken, String myMessage) {
+    public void sendMessageToBot(UUID botToken, ServerResponse serverResponse) {
         WebSocketSession session = connections.get(botToken);
         if (session != null && session.isOpen()) {
-            session.send(Mono.just(session.textMessage(myMessage))).subscribe(); // Отправляем сообщение
+            var response = writeServerResponseAsJson(serverResponse);
+            session.send(Mono.just(session.textMessage(response))).subscribe(); // Отправляем сообщение
             return;
         }
         log.info("Сообщение для пользователя {} не может быть доставлено", botToken);
@@ -61,7 +66,13 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .ifPresent(session -> connections.remove(botToken));
     }
 
+    @Override
     public Optional<WebSocketSession> getConnection(UUID botToken) {
         return Optional.ofNullable(connections.get(botToken));
+    }
+
+    @SneakyThrows
+    private String writeServerResponseAsJson(ServerResponse response) {
+        return objectMapper.writeValueAsString(response);
     }
 }
