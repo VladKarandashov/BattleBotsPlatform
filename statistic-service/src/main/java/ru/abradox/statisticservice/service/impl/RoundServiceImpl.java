@@ -6,8 +6,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.statistic.StatusRound;
-import ru.abradox.client.statistic.TypeRound;
 import ru.abradox.client.token.TypeToken;
+import ru.abradox.platformapi.game.TypeRound;
 import ru.abradox.platformapi.game.event.FinishRound;
 import ru.abradox.platformapi.game.event.StartRound;
 import ru.abradox.platformapi.game.event.WantedRound;
@@ -92,7 +92,7 @@ public class RoundServiceImpl implements RoundService {
             var bot1 = round.getTopBot();
             var bot2 = round.getTopBot();
             rabbitTemplate.convertAndSend("wanted-round", "",
-                    new WantedRound(round.getId(), DEV, bot1.getToken(), bot2.getToken()));
+                    new WantedRound(round.getId(), round.getType(), bot1.getToken(), bot2.getToken()));
         });
     }
 }

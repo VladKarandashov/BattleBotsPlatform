@@ -3,6 +3,7 @@ package ru.abradox.battleservice.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import ru.abradox.platformapi.game.ResultRound;
 import ru.abradox.platformapi.game.TypeRound;
 
 import java.util.UUID;
@@ -23,4 +24,6 @@ public class RoundState {
     private UUID topBotToken;
 
     private UUID downBotToken;
+
+    private ResultRound result;
 }

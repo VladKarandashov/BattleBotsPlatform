@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import ru.abradox.client.statistic.ResultRound;
 import ru.abradox.client.statistic.StatusRound;
-import ru.abradox.client.statistic.TypeRound;
+import ru.abradox.platformapi.game.TypeRound;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
