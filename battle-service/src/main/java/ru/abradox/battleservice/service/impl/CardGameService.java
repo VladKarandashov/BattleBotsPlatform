@@ -8,7 +8,6 @@ import ru.abradox.battleservice.exception.ActionException;
 import ru.abradox.battleservice.model.RoundRepository;
 import ru.abradox.battleservice.model.RoundState;
 import ru.abradox.battleservice.service.GameService;
-import ru.abradox.battleservice.utils.LockExecutor;
 import ru.abradox.platformapi.battle.BotWrapper;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.cardgame.CardDto;
@@ -27,7 +26,6 @@ public class CardGameService implements GameService {
 
     private final RoundRepository roundRepository;
     private final RabbitTemplate rabbitTemplate;
-    private final LockExecutor lockExecutor;
 
     @Override
     public void startRound(StartRound startRoundEvent) {
@@ -41,29 +39,6 @@ public class CardGameService implements GameService {
             var response = new BotWrapper<>(token, serverResponse);
             rabbitTemplate.convertAndSend("bot-response", "", response);
         });
-    }
-
-    @Override
-    public void action(UUID token, BotAction action) {
-        try {
-            // Проверить раунд на существование и что он не закончен
-            var roundId = action.getRoundId();
-            var round = checkRoundExist(roundId);
-            lockExecutor.execute(round.toString(), 3, () -> {
-                // Проверить что мы ждём ход именно этого бота.
-                // Проверить, что он правильно выбрал линии атаки/защиты по своему статусу (или он сдался).
-                checkActionAllowed(round, token, action.getCode());
-                // Далее уже конкретные действия
-                doAction(round, token, action);
-            });
-        } catch (ActionException e) {
-            var response = new BotWrapper<>(token, e.getResponse());
-            rabbitTemplate.convertAndSend("bot-response", "", response);
-        } catch (Exception e) {
-            log.error("Непредвиденная ошибка", e);
-            var response = new BotWrapper<>(token, new ServerResponse(StatusCode.INTERNAL_ERROR));
-            rabbitTemplate.convertAndSend("bot-response", "", response);
-        }
     }
 
     private RoundState createRound(StartRound event) {
@@ -88,13 +63,30 @@ public class CardGameService implements GameService {
         return cardList;
     }
 
-    private RoundState checkRoundExist(UUID roundId) {
-        var round = roundRepository.findById(roundId)
-                .orElseThrow(() -> new ActionException(new ServerResponse(StatusCode.ROUND_NOT_FOUND)));
-        if (round.getResult() != null) {
-            throw new ActionException(new ServerResponse(StatusCode.ROUND_ALREADY_FINISHED));
+    @Override
+    public void doAction(RoundState round, UUID token, BotAction botAction) {
+        // Проверить что мы ждём ход именно этого бота.
+        // Проверить, что он правильно выбрал линии атаки/защиты по своему статусу (или он сдался).
+        var action = botAction.getCode();
+        checkActionAllowed(round, token, action);
+        // Далее уже конкретные действия
+        switch (action.getCode()) {
+            case 1:
+                attackAction(round, token, botAction.getCards());
+                break;
+            case 2:
+                discardAction(round, token);
+                break;
+            case 3:
+                defendAction(round, token, botAction.getCards());
+                break;
+            case 4:
+                takeAction(round, token);
+                break;
+            case 5:
+                giveUpAction(round, token);
+                break;
         }
-        return round;
     }
 
     private void checkActionAllowed(RoundState round, UUID token, ActionCode actionCode) {
@@ -110,26 +102,18 @@ public class CardGameService implements GameService {
         }
     }
 
-    private void doAction(RoundState round, UUID token, BotAction botAction) {
-        switch (botAction.getCode().getCode()) {
-            case 1: attackAction(round, token, botAction.getCards()); break;
-            case 2: discardAction(round, token); break;
-            case 3: defendAction(round, token, botAction.getCards()); break;
-            case 4: takeAction(round, token); break;
-            case 5: giveUpAction(round, token); break;
-        }
-    }
-
     private void attackAction(RoundState round, UUID token, Set<CardDto> cards) {
+        // проверить что карт не 0
         // проверить чтобы на столе не оказалось больше 6 карт
         // проверить, чтобы на столе не оказалось больше карт, чем есть на руках у второго игрока
-        // проверить, что на столе не было карт совсем, либо новые карты подражают старым
+        // проверить что карты у него есть
+        // проверить, что на столе не было карт совсем и карты одинаковые, либо новые карты подражают старым
 
         // сделать атаку в картах
         // update time
         // переставить активность
 
-        // отправить защищаемуся, что он должен защищаться
+        // отправить защищающемуся, что он должен защищаться
         // отправить атакующему, что он молодец и может ждать хода соперника
     }
 
@@ -139,7 +123,7 @@ public class CardGameService implements GameService {
         // сбросить карты в бито
         // раздать игрокам карты в нужном порядке
 
-        // ПРОВЕРИТЬ НА ЗАВЕРШЁННОСТЬ
+        // ПРОВЕРИТЬ НА ЗАВЕРШЁННОСТЬ (0 карт на руках)
 
         // update time
         // переставить активность
@@ -149,7 +133,8 @@ public class CardGameService implements GameService {
     }
 
     private void defendAction(RoundState round, UUID token, Set<CardDto> cards) {
-        // проверить, что этими картами можно отбиться
+        // проверить что карты у него есть
+        // проверить, что этими картами можно отбиться без дублирования
 
         // сделать отбитие в картах
 
@@ -160,9 +145,7 @@ public class CardGameService implements GameService {
     }
 
     private void takeAction(RoundState round, UUID token) {
-        // проверить, что на столе есть карты
-
-        // переложить карты со стола к защищаемуся игроку
+        // переложить карты со стола к защищающемуся игроку
         // раздать игрокам карты в нужном порядке
 
         // ПРОВЕРИТЬ НА ЗАВЕРШЁННОСТЬ

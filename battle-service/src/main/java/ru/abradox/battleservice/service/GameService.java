@@ -1,5 +1,6 @@
 package ru.abradox.battleservice.service;
 
+import ru.abradox.battleservice.model.RoundState;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.cardgame.event.BotAction;
 
@@ -9,5 +10,5 @@ public interface GameService {
 
     void startRound(StartRound startRoundEvent);
 
-    void action(UUID token, BotAction action);
+    void doAction(RoundState round, UUID token, BotAction botAction);
 }
