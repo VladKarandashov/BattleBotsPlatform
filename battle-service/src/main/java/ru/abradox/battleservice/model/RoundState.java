@@ -29,7 +29,9 @@ public class RoundState {
 
     private UUID downBotToken;
 
-    private UUID activeToken;
+    private UUID activeToken; // от кого сейчас ждём ход?
+
+    private UUID attackerToken; // кто сейчас в позиции атакующего
 
     private CardDto lastCard;
 
@@ -54,11 +56,20 @@ public class RoundState {
         this.topBotToken = topBotToken;
         this.downBotToken = downBotToken;
         this.activeToken = downBotToken;
+        this.attackerToken = downBotToken;
         this.lastCard = deck.getLast();
         this.deck = deck;
         this.topBotCards = new HashSet<>(topBotCards);
         this.downBotCards = new HashSet<>(downBotCards);
         this.updateTime = LocalDateTime.now();
+    }
+
+    public boolean isAttacker(UUID token) {
+        return attackerToken.equals(token);
+    }
+
+    public boolean isDefender(UUID token) {
+        return !isAttacker(token);
     }
 
     public Map<UUID, RoundStateInfo> getStateInfo() {
