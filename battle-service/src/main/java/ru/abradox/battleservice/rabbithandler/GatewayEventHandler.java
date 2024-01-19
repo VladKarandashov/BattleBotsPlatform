@@ -15,7 +15,7 @@ public class GatewayEventHandler {
 
     private final RoundService roundService;
 
-    @RabbitListener(queues = "bot-action")
+    @RabbitListener(queues = "bot-actions")
     public void action(BotWrapper<BotAction> actionEvent) {
         roundService.action(actionEvent.getToken(), actionEvent.getData());
     }

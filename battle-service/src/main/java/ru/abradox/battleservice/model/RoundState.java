@@ -13,6 +13,8 @@ import ru.abradox.platformapi.cardgame.RoundStateInfo;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.apache.commons.lang.math.NumberUtils.min;
+
 @Getter
 @Setter
 @ToString
@@ -57,10 +59,11 @@ public class RoundState {
         this.downBotToken = downBotToken;
         this.activeToken = downBotToken;
         this.attackerToken = downBotToken;
-        this.lastCard = deck.getLast();
+        this.lastCard = deck.get(deck.size()-1);
         this.deck = deck;
         this.topBotCards = new HashSet<>(topBotCards);
         this.downBotCards = new HashSet<>(downBotCards);
+        this.table = new HashSet<>();
         this.updateTime = LocalDateTime.now();
     }
 
@@ -75,11 +78,11 @@ public class RoundState {
     public void dealCards() {
         var attacker = getAttackerStateInfo();
         while (attacker.getHandCards().size() < 6 && !deck.isEmpty()) {
-            attacker.getHandCards().add(deck.removeFirst());
+            attacker.getHandCards().add(deck.remove(0));
         }
         var defender = getDefenderStateInfo();
         while (defender.getHandCards().size() < 6 && !deck.isEmpty()) {
-            defender.getHandCards().add(deck.removeFirst());
+            defender.getHandCards().add(deck.remove(0));
         }
 
         if (attacker.getHandCards().isEmpty() && defender.getHandCards().isEmpty()) {
@@ -131,6 +134,6 @@ public class RoundState {
     }
 
     private RoundStateInfo getStateInfo(Set<CardDto> botCards, Integer opponentLeft, Boolean isNeedAction) {
-        return new RoundStateInfo(id, table, botCards, lastCard, deck.size(), opponentLeft, isNeedAction, Math.min(6-table.size(), opponentLeft));
+        return new RoundStateInfo(id, table, botCards, lastCard, deck.size(), opponentLeft, isNeedAction, min(6-table.size(), opponentLeft, botCards.size()));
     }
 }

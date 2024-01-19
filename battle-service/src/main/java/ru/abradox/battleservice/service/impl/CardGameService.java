@@ -37,14 +37,7 @@ public class CardGameService implements GameService {
     public void startRound(StartRound startRoundEvent) {
         var round = createRound(startRoundEvent);
         round = roundRepository.save(round);
-        var infoMap = round.getStateInfo();
-        infoMap.forEach((tokenId, info) -> {
-            var serverResponse = info.getIsNeedAction() ?
-                    new ServerResponse(StatusCode.START_ROUND_WITH_ACTIVE, info) :
-                    new ServerResponse(StatusCode.START_ROUND, info);
-            var response = new BotWrapper<>(tokenId, serverResponse);
-            rabbitTemplate.convertAndSend("bot-response", "", response);
-        });
+        sendStateInfo(round, StatusCode.START_ROUND_WITH_ACTIVE, StatusCode.START_ROUND);
     }
 
     private RoundState createRound(StartRound event) {

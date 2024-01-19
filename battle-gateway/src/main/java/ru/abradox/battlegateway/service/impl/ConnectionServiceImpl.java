@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
 import ru.abradox.battlegateway.service.ConnectionService;
+import ru.abradox.platformapi.battle.BotWrapper;
+import ru.abradox.platformapi.cardgame.event.BotAction;
 import ru.abradox.platformapi.cardgame.event.ServerResponse;
 
 import java.util.Map;
@@ -32,7 +34,9 @@ public class ConnectionServiceImpl implements ConnectionService {
     // TODO прикрутить res4j: rateLimiter и сообщение NOT SPAM
     public void handleUserMessage(UUID botToken, String userMessage) {
         log.info("От пользователя {} получено сообщение {}", botToken, userMessage);
-        rabbitTemplate.convertAndSend("bot-actions", "", userMessage);
+        // TODO валидация входящего сообщения
+        var action = new BotWrapper<>(botToken, readActionFromJson(userMessage));
+        rabbitTemplate.convertAndSend("bot-actions", "", action);
     }
 
     @Override
@@ -74,5 +78,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     @SneakyThrows
     private String writeServerResponseAsJson(ServerResponse response) {
         return objectMapper.writeValueAsString(response);
+    }
+
+    @SneakyThrows
+    private BotAction readActionFromJson(String message) {
+        return objectMapper.readValue(message, BotAction.class);
     }
 }

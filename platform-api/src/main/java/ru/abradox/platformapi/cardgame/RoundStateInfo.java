@@ -26,5 +26,5 @@ public class RoundStateInfo {
 
     private Boolean isNeedAction;
 
-    private Integer numberOfCardsToAttack; // если ход атакующий - то можно положить на стол не более карт = Math.min(6-table.size(), opponentLeft)
+    private Integer numberOfCardsToAttack; // если ход атакующий - то можно положить на стол не более карт = min(6-table.size, opponentLeft, handCards.size)
 }
