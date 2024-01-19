@@ -119,17 +119,17 @@ public class CardGameService implements GameService {
         if (cards.isEmpty()) {
             throw new ActionException(new ServerResponse(StatusCode.NO_CARDS));
         }
-        if (cards.size()+round.getTable().size() > 6) {
+        if (cards.size() + round.getTable().size() > 6) {
             throw new ActionException(new ServerResponse(StatusCode.TOO_MANY_CARDS_ON_TABLE));
         }
-        if (cards.size()+round.getTable().size() > opponentState.getHandCards().size()) {
+        if (cards.size() + round.getTable().size() > opponentState.getHandCards().size()) {
             throw new ActionException(new ServerResponse(StatusCode.TOO_MANY_CARDS_FOR_OPPONENT));
         }
         if (!botState.getHandCards().containsAll(cards)) {
             throw new ActionException(new ServerResponse(StatusCode.NOT_HAVE_CARDS));
         }
         if (!round.getTable().isEmpty() && !isCardSimilarity(round.getTable(), cards)) {
-            throw new ActionException(new ServerResponse(StatusCode.WRONG_CARDS));
+            throw new ActionException(new ServerResponse(StatusCode.WRONG_CARDS_ATTACK));
         }
 
         // перекладываем карты от атакующего на стол
@@ -186,6 +186,17 @@ public class CardGameService implements GameService {
 
         // проверить, что этими картами можно отбиться без дублирования
         // сделать отбитие в картах TODO
+        var trumpSuit = round.getLastCard().getSuit();
+
+        for (TableDto tableDto : round.getTable()) {
+            if (tableDto.getBeaten() != null) continue;
+            var placedCard = tableDto.getPlaced();
+            var beatingCard = findBeatingCard(placedCard, cards, trumpSuit)
+                    .orElseThrow(() -> new ActionException(new ServerResponse(StatusCode.WRONG_CARDS_DEFEND)));
+
+            tableDto.setBeaten(beatingCard);
+            cards.remove(beatingCard); // Удаляем использованную карту
+        }
 
         // update time
         // переставить активность
@@ -279,5 +290,13 @@ public class CardGameService implements GameService {
             var response = new BotWrapper<>(tokenId, serverResponse);
             rabbitTemplate.convertAndSend("bot-response", "", response);
         });
+    }
+
+    private Optional<CardDto> findBeatingCard(CardDto placedCard, Set<CardDto> cards, Integer trumpSuit) {
+        return cards.stream()
+                .filter(c -> c.canBeat(placedCard, trumpSuit))
+                .min(Comparator.comparingInt(
+                        c -> c.getSuit().equals(trumpSuit) ? c.getNumber() + 200 : c.getNumber()));
+        // Стратегия минимизации: выбираем наименьшую подходящую карту, приоритет у козырей.
     }
 }
