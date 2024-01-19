@@ -81,7 +81,7 @@ public class CardGameService implements GameService {
                 attackAction(round, token, botAction.getCards());
                 break;
             case 2:
-                discardAction(round, token);
+                discardAction(round);
                 break;
             case 3:
                 defendAction(round, token, botAction.getCards());
@@ -144,17 +144,10 @@ public class CardGameService implements GameService {
 
         // отправить защищающемуся, что он должен защищаться
         // отправить атакующему, что он молодец и может ждать хода соперника
-        var infoMap = round.getStateInfo();
-        infoMap.forEach((tokenId, info) -> {
-            var serverResponse = info.getIsNeedAction() ?
-                    new ServerResponse(StatusCode.NEED_DEFEND, info) : // это защищающийся
-                    new ServerResponse(StatusCode.WAIT_OPPONENT_DEFEND, info); // это атакующий
-            var response = new BotWrapper<>(tokenId, serverResponse);
-            rabbitTemplate.convertAndSend("bot-response", "", response);
-        });
+        sendStateInfo(round, StatusCode.NEED_DEFEND, StatusCode.WAIT_OPPONENT_DEFEND);
     }
 
-    private void discardAction(RoundState round, UUID token) {
+    private void discardAction(RoundState round) {
         // проверить, что на столе есть карты
         if (round.getTable().isEmpty()) {
             throw new ActionException(new ServerResponse(StatusCode.EMPTY_DISCARD));
@@ -181,26 +174,28 @@ public class CardGameService implements GameService {
 
         // отправить тому кто должен атаковать, что можно атаковать
         // отправить тому кто защищается, что он будет защищаться
-        var infoMap = round.getStateInfo();
-        infoMap.forEach((tokenId, info) -> {
-            var serverResponse = info.getIsNeedAction() ?
-                    new ServerResponse(StatusCode.NEED_ATTACK_AFTER_DISCARD, info) : // это атакующий
-                    new ServerResponse(StatusCode.WAIT_OPPONENT_ATTACK_AFTER_DISCARD, info); // это защищающийся
-            var response = new BotWrapper<>(tokenId, serverResponse);
-            rabbitTemplate.convertAndSend("bot-response", "", response);
-        });
+        sendStateInfo(round, StatusCode.NEED_ATTACK_AFTER_DISCARD, StatusCode.WAIT_OPPONENT_ATTACK_AFTER_DISCARD);
     }
 
     private void defendAction(RoundState round, UUID token, Set<CardDto> cards) {
         // проверить что карты у него есть
-        // проверить, что этими картами можно отбиться без дублирования
+        var botState = round.getMyStateInfoByToken(token);
+        if (!botState.getHandCards().containsAll(cards)) {
+            throw new ActionException(new ServerResponse(StatusCode.NOT_HAVE_CARDS));
+        }
 
-        // сделать отбитие в картах
+        // проверить, что этими картами можно отбиться без дублирования
+        // сделать отбитие в картах TODO
 
         // update time
         // переставить активность
+        round.setUpdateTime(LocalDateTime.now());
+        round.changeActivity();
+        round = roundRepository.save(round);
+
         // отправить тому кто атаковал, что можно подкидывать или БИТО
         // отправить тому кто защищается, что он ждёт хода атакующего
+        sendStateInfo(round, StatusCode.NEED_ATTACK_OR_DISCARD, StatusCode.WAIT_OPPONENT_ATTACK_OR_DISCARD);
     }
 
     private void takeAction(RoundState round, UUID token) {
@@ -228,14 +223,7 @@ public class CardGameService implements GameService {
 
         // отправить тому кто атаковал, что можно атаковать снова
         // отправить тому кто защищается, что он снова ждёт хода атакующего
-        var infoMap = round.getStateInfo();
-        infoMap.forEach((tokenId, info) -> {
-            var serverResponse = info.getIsNeedAction() ?
-                    new ServerResponse(StatusCode.NEED_ATTACK_AFTER_TAKE, info) : // это атакующий
-                    new ServerResponse(StatusCode.WAIT_OPPONENT_ATTACK_AFTER_TAKE, info); // это защищающийся
-            var response = new BotWrapper<>(tokenId, serverResponse);
-            rabbitTemplate.convertAndSend("bot-response", "", response);
-        });
+        sendStateInfo(round, StatusCode.NEED_ATTACK_AFTER_TAKE, StatusCode.WAIT_OPPONENT_ATTACK_AFTER_TAKE);
     }
 
     private void giveUpAction(RoundState round, UUID token) {
@@ -280,5 +268,16 @@ public class CardGameService implements GameService {
         }
 
         rabbitTemplate.convertAndSend("finish-round", "", new FinishRound(round.getId(), result));
+    }
+
+    private void sendStateInfo(RoundState round, StatusCode activeStatus, StatusCode notActiveStatus) {
+        var infoMap = round.getStateInfo();
+        infoMap.forEach((tokenId, info) -> {
+            var serverResponse = info.getIsNeedAction() ?
+                    new ServerResponse(activeStatus, info) : // это активный (от которого ждём хода)
+                    new ServerResponse(notActiveStatus, info); // это не активный (который ждёт)
+            var response = new BotWrapper<>(tokenId, serverResponse);
+            rabbitTemplate.convertAndSend("bot-response", "", response);
+        });
     }
 }
