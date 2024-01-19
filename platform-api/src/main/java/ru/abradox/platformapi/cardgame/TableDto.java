@@ -12,4 +12,9 @@ public class TableDto {
     private CardDto placed;
 
     private CardDto beaten;
+
+    public TableDto(CardDto placed) {
+        this.placed = placed;
+        this.beaten = null;
+    }
 }

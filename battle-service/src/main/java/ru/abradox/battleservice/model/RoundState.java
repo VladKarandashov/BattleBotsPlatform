@@ -64,6 +64,33 @@ public class RoundState {
         this.updateTime = LocalDateTime.now();
     }
 
+    public void changeActivity() {
+        activeToken = activeToken.equals(topBotToken) ? downBotToken : topBotToken;
+    }
+
+    public void changeAttacker() {
+        attackerToken = attackerToken.equals(topBotToken) ? downBotToken : topBotToken;
+    }
+
+    public void dealCards() {
+        var attacker = getAttackerStateInfo();
+        while (attacker.getHandCards().size() < 6 && !deck.isEmpty()) {
+            attacker.getHandCards().add(deck.removeFirst());
+        }
+        var defender = getDefenderStateInfo();
+        while (defender.getHandCards().size() < 6 && !deck.isEmpty()) {
+            defender.getHandCards().add(deck.removeFirst());
+        }
+
+        if (attacker.getHandCards().isEmpty() && defender.getHandCards().isEmpty()) {
+            result = ResultRound.DRAW;
+        } else if (attacker.getHandCards().isEmpty()) {
+            result = isAttacker(topBotToken) ? ResultRound.TOP : ResultRound.DOWN;
+        } else if (defender.getHandCards().isEmpty()) {
+            result = isDefender(topBotToken) ? ResultRound.TOP : ResultRound.DOWN;
+        }
+    }
+
     public boolean isAttacker(UUID token) {
         return attackerToken.equals(token);
     }
@@ -79,6 +106,22 @@ public class RoundState {
         );
     }
 
+    public RoundStateInfo getAttackerStateInfo() {
+        return topBotToken.equals(attackerToken) ? getTopStateInfo() : getDownStateInfo();
+    }
+
+    public RoundStateInfo getDefenderStateInfo() {
+        return topBotToken.equals(attackerToken) ? getDownStateInfo() : getTopStateInfo();
+    }
+
+    public RoundStateInfo getMyStateInfoByToken(UUID token) {
+        return topBotToken.equals(token) ? getTopStateInfo() : getDownStateInfo();
+    }
+
+    public RoundStateInfo getOpponentStateInfoByToken(UUID token) {
+        return topBotToken.equals(token) ? getDownStateInfo() : getTopStateInfo();
+    }
+
     public RoundStateInfo getTopStateInfo() {
          return getStateInfo(topBotCards, downBotCards.size(), topBotToken.equals(activeToken));
     }
@@ -88,6 +131,6 @@ public class RoundState {
     }
 
     private RoundStateInfo getStateInfo(Set<CardDto> botCards, Integer opponentLeft, Boolean isNeedAction) {
-        return new RoundStateInfo(id, table, botCards, lastCard, deck.size(), opponentLeft, isNeedAction);
+        return new RoundStateInfo(id, table, botCards, lastCard, deck.size(), opponentLeft, isNeedAction, Math.min(6-table.size(), opponentLeft));
     }
 }

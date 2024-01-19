@@ -60,6 +60,9 @@ public class RoundServiceImpl implements RoundService {
             if (result != null) {
                 // если раунд уже закончен, пере-отправляем событие о завершении
                 rabbitTemplate.convertAndSend("finish-round", "", new FinishRound(roundId, result));
+            } else {
+                // если раунд до сих пор не закончен - значит он затянулся и надо его завершить ничьей
+                // TODO (возможно это дурость)
             }
         }
     }

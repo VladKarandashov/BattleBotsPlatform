@@ -25,4 +25,6 @@ public class RoundStateInfo {
     private Integer opponentLeft; // сколько карт сейчас на руках у соперника
 
     private Boolean isNeedAction;
+
+    private Integer numberOfCardsToAttack; // если ход атакующий - то можно положить на стол не более карт = Math.min(6-table.size(), opponentLeft)
 }
