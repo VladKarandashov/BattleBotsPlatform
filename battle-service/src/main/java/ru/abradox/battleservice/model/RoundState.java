@@ -37,13 +37,13 @@ public class RoundState {
 
     private CardDto lastCard;
 
-    private List<CardDto> deck;
+    private List<CardDto> deck = new ArrayList<>();
 
-    private Set<CardDto> topBotCards;
+    private Set<CardDto> topBotCards = new HashSet<>();
 
-    private Set<CardDto> downBotCards;
+    private Set<CardDto> downBotCards = new HashSet<>();
 
-    private Set<TableDto> table;
+    private Set<TableDto> table = new HashSet<>();
 
     @Indexed
     private LocalDateTime updateTime;

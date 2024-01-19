@@ -1,5 +1,6 @@
 package ru.abradox.platformapi.cardgame.event;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,11 +22,8 @@ public enum ActionCode {
     GIVE_UP(5)            // сдаться
     ;
 
+    @JsonValue
     private final int code;
-
-    public int getCode() {
-        return code;
-    }
 
     public static final Set<ActionCode> attackerActions = Set.of(ATTACK, DISCARD);
 

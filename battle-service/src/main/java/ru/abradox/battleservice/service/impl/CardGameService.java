@@ -222,7 +222,9 @@ public class CardGameService implements GameService {
         }
 
         // update time
+        // переставить активность
         round.setUpdateTime(LocalDateTime.now());
+        round.changeActivity();
         round = roundRepository.save(round);
 
         // отправить тому кто атаковал, что можно атаковать снова
@@ -271,6 +273,7 @@ public class CardGameService implements GameService {
                     new BotWrapper<>(downBot.getId(), new ServerResponse(StatusCode.DRAW)));
         }
 
+        log.info("Партия завершилась {}", result);
         rabbitTemplate.convertAndSend("finish-round", "", new FinishRound(round.getId(), result));
     }
 

@@ -60,9 +60,6 @@ public class RoundServiceImpl implements RoundService {
             if (result != null) {
                 // если раунд уже закончен, пере-отправляем событие о завершении
                 rabbitTemplate.convertAndSend("finish-round", "", new FinishRound(roundId, result));
-            } else {
-                // если раунд до сих пор не закончен - значит он затянулся и надо его завершить ничьей
-                // TODO (возможно это дурость)
             }
         }
     }
@@ -80,6 +77,7 @@ public class RoundServiceImpl implements RoundService {
             log.info("Новое действие пользователя {} с телом {} для раунда {}", token, action, round);
             lockExecutor.execute(round.toString(), 3, () -> gameService.doAction(round, token, action));
         } catch (ActionException e) {
+            log.error("Бизнес ошибка", e);
             var response = new BotWrapper<>(token, e.getResponse());
             rabbitTemplate.convertAndSend("bot-response", "", response);
         } catch (Exception e) {
