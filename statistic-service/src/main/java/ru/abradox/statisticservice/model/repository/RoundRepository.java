@@ -23,4 +23,10 @@ public interface RoundRepository extends JpaRepository<RoundEntity, UUID> {
             "JOIN FETCH r.downBot " +
             "WHERE r.id = :id")
     Optional<RoundEntity> findByIdWithBots(UUID id);
+
+    @Query("SELECT r FROM RoundEntity r " +
+            "JOIN FETCH r.topBot tb " +
+            "JOIN FETCH r.downBot db " +
+            "WHERE r.status = 'WAIT' AND r.type = 'PROD' AND tb.isPlay = false")
+    List<RoundEntity> findWaitProdRoundsWithNotPlayBots();
 }

@@ -18,10 +18,12 @@ import ru.abradox.statisticservice.model.repository.RoundRepository;
 import ru.abradox.statisticservice.service.RoundService;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.abradox.platformapi.battle.TypeRound.DEV;
+import static ru.abradox.platformapi.battle.TypeRound.PROD;
 
 @Slf4j
 @Service
@@ -60,6 +62,31 @@ public class RoundServiceImpl implements RoundService {
             round = roundRepository.save(round);
             rabbitTemplate.convertAndSend("start-round", "",
                     new StartRound(round.getId(), DEV, bot1.getToken(), bot2.getToken()));
+            log.info("Запущен DEV раунд {} {} {}", round.getId(), bot1.getId(), bot2.getId());
+        });
+    }
+
+    @Override
+    @Transactional
+    public void startProdRounds() {
+        var freeProdRounds = roundRepository.findWaitProdRoundsWithNotPlayBots();
+        if (freeProdRounds.isEmpty()) return;
+        var futurePlayingBots = new HashSet<BotEntity>();
+        freeProdRounds.forEach(round -> {
+            var topBot = round.getTopBot();
+            var downBot = round.getDownBot();
+            if (!futurePlayingBots.contains(topBot) && !futurePlayingBots.contains(downBot)) {
+                futurePlayingBots.add(topBot);
+                futurePlayingBots.add(downBot);
+                round.setStatus(StatusRound.PROGRESS);
+                round.setBegin(LocalDateTime.now());
+                topBot.setIsPlay(true);
+                downBot.setIsPlay(true);
+                roundRepository.save(round);
+                rabbitTemplate.convertAndSend("start-round", "",
+                        new StartRound(round.getId(), PROD, topBot.getToken(), downBot.getToken()));
+                log.info("Запущен DEV раунд {} {} {}", round.getId(), topBot.getId(), downBot.getId());
+            }
         });
     }
 
@@ -67,17 +94,23 @@ public class RoundServiceImpl implements RoundService {
     @Transactional
     public void finishRound(FinishRound finishRoundRequest) {
         var id = finishRoundRequest.getId();
+        var result = finishRoundRequest.getResult();
         roundRepository.findByIdWithBots(id).ifPresent(round -> {
+            log.info("Завершаю {} раунд", round.getId());
+            var bot1 = round.getTopBot();
+            var bot2 = round.getDownBot();
+            bot1.setIsPlay(false);
+            bot2.setIsPlay(false);
+            botRepository.saveAll(List.of(bot1, bot2));
+
             var type = round.getType();
             if (TypeRound.DEV.equals(type)) {
-                var bot1 = round.getTopBot();
-                var bot2 = round.getDownBot();
-                bot1.setIsPlay(false);
-                bot2.setIsPlay(false);
-                botRepository.saveAll(List.of(bot1, bot2));
                 roundRepository.delete(round);
             } else if (TypeRound.PROD.equals(type)) {
-                // TODO завершение PROD раунда
+                round.setStatus(StatusRound.FINISHED);
+                round.setEnd(LocalDateTime.now());
+                round.setResult(result);
+                roundRepository.save(round);
             }
         });
     }
@@ -89,6 +122,7 @@ public class RoundServiceImpl implements RoundService {
         var beforeTime = LocalDateTime.now().minusMinutes(2);
         var oldRounds = roundRepository.findRoundsByStatusBeforeGivenTime(StatusRound.PROGRESS, beforeTime);
         oldRounds.forEach(round -> {
+            log.info("Обнаружена задержка в раунде {}", round.getId());
             var bot1 = round.getTopBot();
             var bot2 = round.getTopBot();
             rabbitTemplate.convertAndSend("wanted-round", "",

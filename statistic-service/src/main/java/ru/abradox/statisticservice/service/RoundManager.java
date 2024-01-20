@@ -5,5 +5,7 @@ public interface RoundManager {
 
     void startDevRounds();
 
+    void startProdRounds();
+
     void validateRounds();
 }
