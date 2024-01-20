@@ -20,4 +20,8 @@ public interface BotRepository extends JpaRepository<BotEntity, Integer> {
     Set<UUID> findAllTokens();
 
     List<BotEntity> findAllByTypeAndIsActiveAndIsPlay(TypeToken type, Boolean isActive, Boolean isPlay);
+
+    List<BotEntity> findAllByTypeAndPositionNotNullOrderByPosition(TypeToken type);
+
+    List<BotEntity> findAllByTypeAndPositionIsNull(TypeToken type);
 }

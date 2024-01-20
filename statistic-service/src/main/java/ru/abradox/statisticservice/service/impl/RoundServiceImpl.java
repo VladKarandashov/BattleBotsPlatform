@@ -3,6 +3,7 @@ package ru.abradox.statisticservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.statistic.StatusRound;
@@ -19,8 +20,7 @@ import ru.abradox.statisticservice.model.repository.RoundRepository;
 import ru.abradox.statisticservice.service.RoundService;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.abradox.platformapi.battle.TypeRound.DEV;
@@ -114,11 +114,84 @@ public class RoundServiceImpl implements RoundService {
     }
 
     @Override
+    @Transactional
     public void startCompetition() {
         // проверяем, что все существующие PROD партии завершены
-        // сканируем результаты PROD партий и перестраиваем рейтинг
+        var areAllProdRoundsComplete = roundRepository.areAllRoundsWithGivenTypeHaveGivenStatus(PROD, StatusRound.FINISHED);
+        if (!areAllProdRoundsComplete) return;
+        // сканируем результаты PROD партий
+        var resultMap = processResultByBots();
+        // перестраиваем рейтинг
+        var orderedBots = botRepository.findAllByTypeAndPositionNotNullOrderByPosition(TypeToken.PROD);
+        var resultBotRating = new LinkedList<BotEntity>();
+        orderedBots.forEach(bot -> {
+            var botResult = resultMap.get(bot.getId());
+            var isBotDeferTop = botResult.getFirst();
+            var topBotId = botResult.getSecond();
+            // если данный бот победил своего TOP-a - вставляем его перед ним - иначе в конец
+            if (isBotDeferTop) {
+                var topBotIndex = botIndexById(resultBotRating, topBotId);
+                resultBotRating.add(topBotIndex, bot);
+            } else {
+                resultBotRating.add(bot);
+            }
+        });
+        // добавляем в рейтинг новых ботов
+        resultBotRating.addAll(botRepository.findAllByTypeAndPositionIsNull(TypeToken.PROD));
+        // проставляем новые position
+        for (int i = 0; i < resultBotRating.size(); i++) {
+            resultBotRating.get(i).setPosition(i + 1);
+        }
+        botRepository.saveAll(resultBotRating);
         // удаляем все prod партии
+        roundRepository.deleteAllByType(PROD);
         // создаём новые партии по новому рейтингу в статусе WAIT
+        var competitionBots = botRepository.findAllByTypeAndPositionNotNullOrderByPosition(TypeToken.PROD);
+        List<RoundEntity> roundList = new ArrayList<>();
+        for (int i = 1; i < competitionBots.size(); i++) {
+            var topBot = competitionBots.get(i - 1);
+            var downBot = competitionBots.get(i);
+            for (int j = 0; j < 5; j++) {
+                roundList.add(RoundEntity.builder()
+                        .topBot(topBot)
+                        .downBot(downBot)
+                        .type(TypeRound.PROD)
+                        .status(StatusRound.WAIT)
+                        .build());
+            }
+        }
+        roundList = roundRepository.saveAll(roundList);
+        log.info("Успешно создано новое соревнование, включающее {} раундов", roundList.size());
+    }
+
+    /**
+     * @return возвращает Map, где ключ - id бота, а значение - Pair.of(признак выигрыша, id сильного соперника)
+     */
+    private Map<Integer, Pair<Boolean, Integer>> processResultByBots() {
+        var roundList = roundRepository.findRoundsByStatusBeforeGivenTime(PROD);
+        return roundList.stream()
+                .collect(Collectors.groupingBy(round -> round.getDownBot().getId()))
+                .entrySet()
+                .stream()
+                .map(roundsGroup -> {
+                    var rounds = roundsGroup.getValue();
+                    var downBotId = roundsGroup.getKey();
+                    var topBotId = rounds.getFirst().getTopBot().getId();
+                    var downBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.DOWN)).count();
+                    var topBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.TOP)).count();
+                    return downBotWinCount > topBotWinCount ?
+                            Pair.of(downBotId, Pair.of(true, topBotId)) :
+                            Pair.of(downBotId, Pair.of(false, topBotId));
+                }).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
+
+    }
+
+    private Integer botIndexById(List<BotEntity> bots, Integer id) {
+        for (int i = 0; i < bots.size(); i++) {
+            var bot = bots.get(i);
+            if (Objects.equals(bot.getId(), id)) return i;
+        }
+        return -1;
     }
 
     @Override
