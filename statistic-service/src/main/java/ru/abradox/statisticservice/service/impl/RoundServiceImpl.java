@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.statistic.StatusRound;
 import ru.abradox.client.token.TypeToken;
+import ru.abradox.platformapi.battle.ResultRound;
 import ru.abradox.platformapi.battle.TypeRound;
 import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
@@ -78,16 +79,46 @@ public class RoundServiceImpl implements RoundService {
             if (!futurePlayingBots.contains(topBot) && !futurePlayingBots.contains(downBot)) {
                 futurePlayingBots.add(topBot);
                 futurePlayingBots.add(downBot);
-                round.setStatus(StatusRound.PROGRESS);
-                round.setBegin(LocalDateTime.now());
-                topBot.setIsPlay(true);
-                downBot.setIsPlay(true);
-                roundRepository.save(round);
-                rabbitTemplate.convertAndSend("start-round", "",
-                        new StartRound(round.getId(), PROD, topBot.getToken(), downBot.getToken()));
-                log.info("Запущен DEV раунд {} {} {}", round.getId(), topBot.getId(), downBot.getId());
+                startRound(round, topBot, downBot);
             }
         });
+    }
+
+    private void startRound(RoundEntity round, BotEntity topBot, BotEntity downBot) {
+        var isTopBotActive = topBot.getIsActive();
+        var isDownBotActive = downBot.getIsActive();
+        if (!isTopBotActive || !isDownBotActive) {
+            // партию начинать нет смысла, так как один из ботов не подключен
+            round.setStatus(StatusRound.FINISHED);
+            var time = LocalDateTime.now();
+            round.setBegin(time);
+            round.setEnd(time);
+            round.setResult(parseResult(isTopBotActive, isDownBotActive));
+            roundRepository.save(round);
+            log.info("Пропущен PROD раунд {} так как отсутствует одно из подключений", round.getId());
+        } else {
+            round.setStatus(StatusRound.PROGRESS);
+            round.setBegin(LocalDateTime.now());
+            topBot.setIsPlay(true);
+            downBot.setIsPlay(true);
+            roundRepository.save(round);
+            rabbitTemplate.convertAndSend("start-round", "",
+                    new StartRound(round.getId(), PROD, topBot.getToken(), downBot.getToken()));
+            log.info("Запущен PROD раунд {} {} {}", round.getId(), topBot.getId(), downBot.getId());
+        }
+    }
+
+    private ResultRound parseResult(boolean isTopBotActive, boolean isDownBotActive) {
+        if (!isTopBotActive && !isDownBotActive) return ResultRound.DRAW;
+        return isTopBotActive ? ResultRound.TOP : ResultRound.DOWN;
+    }
+
+    @Override
+    public void startCompetition() {
+        // проверяем, что все существующие PROD партии завершены
+        // сканируем результаты PROD партий и перестраиваем рейтинг
+        // удаляем все prod партии
+        // создаём новые партии по новому рейтингу в статусе WAIT
     }
 
     @Override

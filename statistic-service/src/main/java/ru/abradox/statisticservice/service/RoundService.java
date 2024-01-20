@@ -8,6 +8,8 @@ public interface RoundService {
 
     void startProdRounds();
 
+    void startCompetition();
+
     void finishRound(FinishRound finishRoundRequest);
 
     void validateRounds();

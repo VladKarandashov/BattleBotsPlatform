@@ -7,5 +7,7 @@ public interface RoundManager {
 
     void startProdRounds();
 
+    void startCompetition();
+
     void validateRounds();
 }
