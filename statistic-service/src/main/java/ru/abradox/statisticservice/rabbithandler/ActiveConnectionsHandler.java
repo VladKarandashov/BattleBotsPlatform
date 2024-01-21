@@ -18,7 +18,6 @@ public class ActiveConnectionsHandler {
 
     @RabbitListener(queues = "active-connections")
     public void updateActiveConnections(List<TokenDto> activeTokens) {
-        log.info("Обновляю активность ботов {}", activeTokens);
         connectionService.updateActiveConnections(activeTokens);
     }
 }

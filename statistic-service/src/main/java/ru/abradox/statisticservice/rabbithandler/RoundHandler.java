@@ -16,7 +16,6 @@ public class RoundHandler {
 
     @RabbitListener(queues = "finish-round")
     public void finishRound(FinishRound finishRoundRequest) {
-        log.info("Завершаю партию {}", finishRoundRequest.getId());
         roundService.finishRound(finishRoundRequest);
     }
 }

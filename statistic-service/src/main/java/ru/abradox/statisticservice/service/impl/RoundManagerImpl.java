@@ -24,14 +24,14 @@ public class RoundManagerImpl implements RoundManager {
 
     @Override
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
-    @SchedulerLock(name = "startDevRounds", lockAtMostFor = "9s", lockAtLeastFor = "9s")
+    @SchedulerLock(name = "startProdRounds", lockAtMostFor = "9s", lockAtLeastFor = "9s")
     public void startProdRounds() {
         roundService.startProdRounds();
     }
 
     @Override
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
-    @SchedulerLock(name = "startDevRounds", lockAtMostFor = "58s", lockAtLeastFor = "58s")
+    @SchedulerLock(name = "startCompetition", lockAtMostFor = "58s", lockAtLeastFor = "58s")
     public void startCompetition() {
         roundService.startCompetition();
     }

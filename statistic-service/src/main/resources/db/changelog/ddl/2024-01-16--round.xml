@@ -29,9 +29,7 @@
             <column name="status" type="VARCHAR(256)">
                 <constraints nullable="false"/>
             </column>
-            <column name="begin_time" type="DATETIME">
-                <constraints nullable="false"/>
-            </column>
+            <column name="begin_time" type="DATETIME"/>
             <column name="end_time" type="DATETIME"/>
             <column name="result" type="VARCHAR(256)"/>
         </createTable>

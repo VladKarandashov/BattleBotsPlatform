@@ -19,7 +19,7 @@ import static org.apache.commons.lang.math.NumberUtils.min;
 @Setter
 @ToString
 @NoArgsConstructor
-@RedisHash(value = "round_state", timeToLive = 60*60L)
+@RedisHash(value = "round_state", timeToLive = 10*60L)
 public class RoundState {
 
     @Id
@@ -45,7 +45,6 @@ public class RoundState {
 
     private Set<TableDto> table = new HashSet<>();
 
-    @Indexed
     private LocalDateTime updateTime;
 
     @Indexed

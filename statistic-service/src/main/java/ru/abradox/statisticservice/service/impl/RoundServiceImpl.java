@@ -122,10 +122,10 @@ public class RoundServiceImpl implements RoundService {
         // сканируем результаты PROD партий
         var resultMap = processResultByBots();
         // перестраиваем рейтинг
-        var orderedBots = botRepository.findAllByTypeAndPositionNotNullOrderByPosition(TypeToken.PROD);
+        var orderedBots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
         var resultBotRating = new LinkedList<BotEntity>();
         orderedBots.forEach(bot -> {
-            var botResult = resultMap.get(bot.getId());
+            var botResult = resultMap.getOrDefault(bot.getId(), Pair.of(false, -1));
             var isBotDeferTop = botResult.getFirst();
             var topBotId = botResult.getSecond();
             // если данный бот победил своего TOP-a - вставляем его перед ним - иначе в конец
@@ -146,7 +146,7 @@ public class RoundServiceImpl implements RoundService {
         // удаляем все prod партии
         roundRepository.deleteAllByType(PROD);
         // создаём новые партии по новому рейтингу в статусе WAIT
-        var competitionBots = botRepository.findAllByTypeAndPositionNotNullOrderByPosition(TypeToken.PROD);
+        var competitionBots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
         List<RoundEntity> roundList = new ArrayList<>();
         for (int i = 1; i < competitionBots.size(); i++) {
             var topBot = competitionBots.get(i - 1);
@@ -176,7 +176,7 @@ public class RoundServiceImpl implements RoundService {
                 .map(roundsGroup -> {
                     var rounds = roundsGroup.getValue();
                     var downBotId = roundsGroup.getKey();
-                    var topBotId = rounds.getFirst().getTopBot().getId();
+                    var topBotId = rounds.get(0).getTopBot().getId();
                     var downBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.DOWN)).count();
                     var topBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.TOP)).count();
                     return downBotWinCount > topBotWinCount ?

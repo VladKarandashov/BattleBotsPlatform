@@ -20,4 +20,9 @@ public class BotAction {
     private ActionCode code;
 
     private Set<CardDto> cards;
+
+    public BotAction(UUID roundId, ActionCode code) {
+        this.roundId = roundId;
+        this.code = code;
+    }
 }

@@ -21,7 +21,7 @@ public interface BotRepository extends JpaRepository<BotEntity, Integer> {
 
     List<BotEntity> findAllByTypeAndIsActiveAndIsPlay(TypeToken type, Boolean isActive, Boolean isPlay);
 
-    List<BotEntity> findAllByTypeAndPositionNotNullOrderByPosition(TypeToken type);
+    List<BotEntity> findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken type);
 
     List<BotEntity> findAllByTypeAndPositionIsNull(TypeToken type);
 }

@@ -253,24 +253,24 @@ public class CardGameService implements GameService {
 
     private void finishRound(RoundState round) {
         var result = round.getResult();
-        var topBot = round.getTopStateInfo();
-        var downBot = round.getDownStateInfo();
+        var topBotToken = round.getTopBotToken();
+        var downBotToken = round.getDownBotToken();
 
         if (ResultRound.TOP.equals(result)) {
             rabbitTemplate.convertAndSend("bot-response", "",
-                    new BotWrapper<>(topBot.getId(), new ServerResponse(StatusCode.WIN)));
+                    new BotWrapper<>(topBotToken, new ServerResponse(StatusCode.WIN)));
             rabbitTemplate.convertAndSend("bot-response", "",
-                    new BotWrapper<>(downBot.getId(), new ServerResponse(StatusCode.LOST)));
+                    new BotWrapper<>(downBotToken, new ServerResponse(StatusCode.LOST)));
         } else if (ResultRound.DOWN.equals(result)) {
             rabbitTemplate.convertAndSend("bot-response", "",
-                    new BotWrapper<>(topBot.getId(), new ServerResponse(StatusCode.LOST)));
+                    new BotWrapper<>(topBotToken, new ServerResponse(StatusCode.LOST)));
             rabbitTemplate.convertAndSend("bot-response", "",
-                    new BotWrapper<>(downBot.getId(), new ServerResponse(StatusCode.WIN)));
+                    new BotWrapper<>(downBotToken, new ServerResponse(StatusCode.WIN)));
         } else if (ResultRound.DRAW.equals(result)) {
             rabbitTemplate.convertAndSend("bot-response", "",
-                    new BotWrapper<>(topBot.getId(), new ServerResponse(StatusCode.DRAW)));
+                    new BotWrapper<>(topBotToken, new ServerResponse(StatusCode.DRAW)));
             rabbitTemplate.convertAndSend("bot-response", "",
-                    new BotWrapper<>(downBot.getId(), new ServerResponse(StatusCode.DRAW)));
+                    new BotWrapper<>(downBotToken, new ServerResponse(StatusCode.DRAW)));
         }
 
         log.info("Партия завершилась {}", result);

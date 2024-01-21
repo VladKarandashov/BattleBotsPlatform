@@ -6,6 +6,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import ru.abradox.battleservice.exception.ActionException;
 import ru.abradox.battleservice.model.RoundRepository;
+import ru.abradox.battleservice.model.RoundState;
 import ru.abradox.battleservice.service.GameService;
 import ru.abradox.battleservice.service.RoundService;
 import ru.abradox.battleservice.utils.LockExecutor;
@@ -15,6 +16,7 @@ import ru.abradox.platformapi.battle.TypeRound;
 import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.battle.event.WantedRound;
+import ru.abradox.platformapi.cardgame.event.ActionCode;
 import ru.abradox.platformapi.cardgame.event.BotAction;
 import ru.abradox.platformapi.cardgame.event.ServerResponse;
 import ru.abradox.platformapi.cardgame.event.StatusCode;
@@ -85,5 +87,12 @@ public class RoundServiceImpl implements RoundService {
             var response = new BotWrapper<>(token, new ServerResponse(StatusCode.INTERNAL_ERROR));
             rabbitTemplate.convertAndSend("bot-response", "", response);
         }
+    }
+
+    @Override
+    public void completeOldRound(RoundState round) {
+        var roundId = round.getId();
+        lockExecutor.execute(roundId.toString(), 2,
+                () -> gameService.doAction(round, round.getActiveToken(), new BotAction(roundId, ActionCode.GIVE_UP)));
     }
 }
