@@ -41,6 +41,15 @@
         </dependency>
 
         <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-redis-spring</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>ru.abradox</groupId>
             <artifactId>platform-api</artifactId>
             <version>0.0.1</version>

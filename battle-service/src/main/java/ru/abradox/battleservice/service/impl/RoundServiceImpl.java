@@ -76,7 +76,7 @@ public class RoundServiceImpl implements RoundService {
             if (round.getResult() != null) {
                 throw new ActionException(new ServerResponse(StatusCode.ROUND_ALREADY_FINISHED));
             }
-            log.info("Новое действие пользователя {} с телом {} для раунда {}", token, action, round);
+            log.debug("Новое действие пользователя {} с телом {} для раунда {}", token, action, round);
             lockExecutor.execute(round.toString(), 3, () -> gameService.doAction(round, token, action));
         } catch (ActionException e) {
             log.error("Бизнес ошибка", e);
@@ -92,7 +92,10 @@ public class RoundServiceImpl implements RoundService {
     @Override
     public void completeOldRound(RoundState round) {
         var roundId = round.getId();
-        lockExecutor.execute(roundId.toString(), 2,
-                () -> gameService.doAction(round, round.getActiveToken(), new BotAction(roundId, ActionCode.GIVE_UP)));
+        lockExecutor.execute(roundId.toString(), 2, () -> {
+            rabbitTemplate.convertAndSend("bot-response", "",
+                    new BotWrapper<>(round.getActiveToken(), new ServerResponse(StatusCode.TIMEOUT)));
+            gameService.doAction(round, round.getActiveToken(), new BotAction(roundId, ActionCode.GIVE_UP));
+        });
     }
 }

@@ -1,4 +1,4 @@
-package ru.abradox.battleservice.rabbithandler;
+package ru.abradox.battleservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
