@@ -2,6 +2,9 @@ package ru.abradox.statisticservice.service;
 
 import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.statistic.current.CompetitionInfo;
+import ru.abradox.platformapi.statistic.history.HistoryInfo;
+
+import java.util.List;
 
 public interface RoundService {
 
@@ -17,5 +20,5 @@ public interface RoundService {
 
     CompetitionInfo getCompetitionInfo();
 
-    CompetitionInfo getHistoryInfo();
+    List<HistoryInfo> getHistoryInfo();
 }

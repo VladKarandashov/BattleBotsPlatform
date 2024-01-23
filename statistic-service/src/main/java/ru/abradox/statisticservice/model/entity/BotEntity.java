@@ -25,6 +25,8 @@ public class BotEntity {
     @Column(name = "user_id")
     private Integer userId;
 
+    private String title;
+
     @Column(name = "token")
     private UUID token;
 

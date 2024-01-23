@@ -31,6 +31,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .map(token -> BotEntity
                         .builder()
                         .userId(token.getUserId())
+                        .title(token.getTitle())
                         .token(token.getUid())
                         .type(token.getType())
                         .isActive(true)
