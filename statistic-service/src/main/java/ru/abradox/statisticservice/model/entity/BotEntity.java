@@ -10,6 +10,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Builder
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bot")

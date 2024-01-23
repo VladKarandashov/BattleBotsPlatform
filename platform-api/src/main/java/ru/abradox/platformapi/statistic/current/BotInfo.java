@@ -1,4 +1,4 @@
-package ru.abradox.platformapi.statistic;
+package ru.abradox.platformapi.statistic.current;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

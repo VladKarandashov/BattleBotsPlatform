@@ -12,7 +12,9 @@ import ru.abradox.platformapi.battle.TypeRound;
 import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.battle.event.WantedRound;
-import ru.abradox.platformapi.statistic.CompetitionInfo;
+import ru.abradox.platformapi.statistic.current.BotInfo;
+import ru.abradox.platformapi.statistic.current.CompetitionInfo;
+import ru.abradox.platformapi.statistic.current.RoundInfo;
 import ru.abradox.statisticservice.model.dto.RoundResult;
 import ru.abradox.statisticservice.model.entity.BotEntity;
 import ru.abradox.statisticservice.model.entity.HistoryEntity;
@@ -161,7 +163,7 @@ public class RoundServiceImpl implements RoundService {
     }
 
     private Map<Integer, RoundResult> processResultByDownBots() {
-        var roundList = roundRepository.findRoundsByStatusBeforeGivenTime(PROD);
+        var roundList = roundRepository.findRoundsByStatus(PROD);
         return roundList.stream()
                 .collect(Collectors.groupingBy(round -> round.getDownBot().getId()))
                 .entrySet()
@@ -255,11 +257,52 @@ public class RoundServiceImpl implements RoundService {
 
     @Override
     public CompetitionInfo getCompetitionInfo() {
-
+        var bots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD)
+                .stream()
+                .map(bot -> new BotInfo(bot.getToken(), bot.getPosition(), bot.getIsActive()))
+                .toList();
+        var roundsInfo = roundRepository.findRoundsByStatus(PROD)
+                .stream()
+                .collect(Collectors.groupingBy(RoundEntity::getDownBot))
+                .entrySet()
+                .stream()
+                .map(roundsGroup -> {
+                    var rounds = roundsGroup.getValue();
+                    var downBot = roundsGroup.getKey();
+                    var topBot = rounds.get(0).getTopBot();
+                    var downBotWinCount = rounds.stream().filter(round -> ResultRound.DOWN.equals(round.getResult())).count();
+                    var topBotWinCount = rounds.stream().filter(round -> ResultRound.TOP.equals(round.getResult())).count();
+                    var drawCount = rounds.stream().filter(round -> ResultRound.DRAW.equals(round.getResult())).count();
+                    var leftCount = rounds.size()-downBotWinCount-topBotWinCount-drawCount;
+                    var isPlay = rounds.stream().anyMatch(round -> StatusRound.PROGRESS.equals(round.getStatus()));
+                    return new RoundInfo(
+                            downBot.getPosition(), topBot.getPosition(),
+                            downBotWinCount, topBotWinCount,
+                            drawCount, leftCount, isPlay);
+                })
+                .toList();
+        var competitionId = historyRepository.findTopByOrderByIdDesc().map(HistoryEntity::getId).orElse(0)+1;
+        return new CompetitionInfo(competitionId, bots, roundsInfo);
     }
 
     @Override
     public CompetitionInfo getHistoryInfo() {
+//        var bots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
+//        var botsByIdMap = bots.stream().collect(Collectors.groupingBy(BotEntity::getId));
+//        var historyRecords = historyRepository.findLast10ByOrderByIdDesc(PageRequest.of(0, 10))
+//                .stream()
+//                .map(record -> {
+//                    var id = record.getId();
+//                    var botList = record.getOrderedBots()
+//                            .stream()
+//                            .map(botsByIdMap::get)
+//                            .map(el -> {
+//                                var bot = el.get(0);
+//                                return new BotInfo(bot.getToken(), bot.getPosition(), bot.getIsActive());
+//                            })
+//                            .toList();
+//
+//                });
 
     }
 }

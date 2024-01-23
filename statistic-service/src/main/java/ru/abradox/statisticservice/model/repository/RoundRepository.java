@@ -42,7 +42,7 @@ public interface RoundRepository extends JpaRepository<RoundEntity, UUID> {
             "JOIN FETCH r.topBot " +
             "JOIN FETCH r.downBot " +
             "WHERE r.type = :type")
-    List<RoundEntity> findRoundsByStatusBeforeGivenTime(TypeRound type);
+    List<RoundEntity> findRoundsByStatus(TypeRound type);
 
     @Modifying
     void deleteAllByType(TypeRound type);

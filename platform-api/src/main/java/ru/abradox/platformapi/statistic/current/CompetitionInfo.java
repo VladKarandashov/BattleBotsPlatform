@@ -1,4 +1,4 @@
-package ru.abradox.platformapi.statistic;
+package ru.abradox.platformapi.statistic.current;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +13,7 @@ public class CompetitionInfo {
 
     private Integer id;
 
-    private List<BotInfo> orderedBots;
+    private List<BotInfo> bots;
 
     private List<RoundInfo> roundInfo;
 }
