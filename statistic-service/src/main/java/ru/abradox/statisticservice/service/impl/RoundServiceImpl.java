@@ -12,6 +12,7 @@ import ru.abradox.platformapi.battle.TypeRound;
 import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.battle.event.WantedRound;
+import ru.abradox.platformapi.statistic.CompetitionInfo;
 import ru.abradox.platformapi.statistic.RoundResult;
 import ru.abradox.statisticservice.model.entity.BotEntity;
 import ru.abradox.statisticservice.model.entity.HistoryEntity;
@@ -250,5 +251,10 @@ public class RoundServiceImpl implements RoundService {
             rabbitTemplate.convertAndSend("wanted-round", "",
                     new WantedRound(round.getId(), round.getType(), bot1.getToken(), bot2.getToken()));
         });
+    }
+
+    @Override
+    public CompetitionInfo getCompetitionInfo() {
+
     }
 }
