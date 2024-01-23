@@ -32,6 +32,7 @@
         <thymeleafExtrasSpringsecurity6.version>3.1.2.RELEASE</thymeleafExtrasSpringsecurity6.version>
         <postgresqlDriver.version>42.7.1</postgresqlDriver.version>
         <redisson.version>3.25.2</redisson.version>
+        <hibernateUtils.version>3.7.0</hibernateUtils.version>
         <lombok.version>1.18.30</lombok.version>
         <lombokMapstruct.version>0.2.0</lombokMapstruct.version>
         <springbootadmin.version>3.2.1</springbootadmin.version>
@@ -114,6 +115,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-websocket</artifactId>
                 <version>${springBoot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.hypersistence</groupId>
+                <artifactId>hypersistence-utils-hibernate-62</artifactId>
+                <version>${hibernateUtils.version}</version>
             </dependency>
 
             <dependency>

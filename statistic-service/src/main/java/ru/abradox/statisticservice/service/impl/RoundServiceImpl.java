@@ -3,7 +3,6 @@ package ru.abradox.statisticservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.abradox.client.statistic.StatusRound;
@@ -14,8 +13,10 @@ import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.battle.event.WantedRound;
 import ru.abradox.statisticservice.model.entity.BotEntity;
+import ru.abradox.statisticservice.model.entity.HistoryEntity;
 import ru.abradox.statisticservice.model.entity.RoundEntity;
 import ru.abradox.statisticservice.model.repository.BotRepository;
+import ru.abradox.statisticservice.model.repository.HistoryRepository;
 import ru.abradox.statisticservice.model.repository.RoundRepository;
 import ru.abradox.statisticservice.service.RoundService;
 
@@ -34,6 +35,7 @@ public class RoundServiceImpl implements RoundService {
     private final BotRepository botRepository;
     private final RabbitTemplate rabbitTemplate;
     private final RoundRepository roundRepository;
+    private final HistoryRepository historyRepository;
 
     @Override
     @Transactional
@@ -120,22 +122,11 @@ public class RoundServiceImpl implements RoundService {
         var areAllProdRoundsComplete = roundRepository.areAllRoundsWithGivenTypeHaveGivenStatus(PROD, StatusRound.FINISHED);
         if (!areAllProdRoundsComplete) return;
         // сканируем результаты PROD партий
-        var resultMap = processResultByBots();
+        var resultMap = processResultByDownBots();
         // перестраиваем рейтинг
-        var orderedBots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
-        var resultBotRating = new LinkedList<BotEntity>();
-        orderedBots.forEach(bot -> {
-            var botResult = resultMap.getOrDefault(bot.getId(), Pair.of(false, -1));
-            var isBotDeferTop = botResult.getFirst();
-            var topBotId = botResult.getSecond();
-            // если данный бот победил своего TOP-a - вставляем его перед ним - иначе в конец
-            if (isBotDeferTop) {
-                var topBotIndex = botIndexById(resultBotRating, topBotId);
-                resultBotRating.add(topBotIndex, bot);
-            } else {
-                resultBotRating.add(bot);
-            }
-        });
+        var resultBotRating = getBotRating(resultMap);
+        // сохраняем рейтинг в историю
+        saveHistory(resultBotRating, resultMap);
         // добавляем в рейтинг новых ботов
         resultBotRating.addAll(botRepository.findAllByTypeAndPositionIsNull(TypeToken.PROD));
         // проставляем новые position
@@ -146,6 +137,61 @@ public class RoundServiceImpl implements RoundService {
         // удаляем все prod партии
         roundRepository.deleteAllByType(PROD);
         // создаём новые партии по новому рейтингу в статусе WAIT
+        makeRounds();
+    }
+
+    private List<BotEntity> getBotRating(Map<Integer, HistoryEntity.RoundResult> resultMap) {
+        var orderedBots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
+        var resultBotRating = new LinkedList<BotEntity>();
+        orderedBots.forEach(bot -> {
+            var botResult = resultMap.get(bot.getId());
+            var isBotDeferTop = botResult != null && botResult.getIsDownBotWin();
+            // если данный бот победил своего TOP-a - вставляем его перед ним - иначе в конец
+            if (isBotDeferTop) {
+                var topBotId = botResult.getTopBotId();
+                var topBotIndex = botIndexById(resultBotRating, topBotId);
+                resultBotRating.add(topBotIndex, bot);
+            } else {
+                resultBotRating.add(bot);
+            }
+        });
+        return resultBotRating;
+    }
+
+    private Map<Integer, HistoryEntity.RoundResult> processResultByDownBots() {
+        var roundList = roundRepository.findRoundsByStatusBeforeGivenTime(PROD);
+        return roundList.stream()
+                .collect(Collectors.groupingBy(round -> round.getDownBot().getId()))
+                .entrySet()
+                .stream()
+                .map(roundsGroup -> {
+                    var rounds = roundsGroup.getValue();
+                    var downBotId = roundsGroup.getKey();
+                    var topBotId = rounds.get(0).getTopBot().getId();
+                    var downBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.DOWN)).count();
+                    var topBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.TOP)).count();
+                    var isDownBotWin = (downBotWinCount > topBotWinCount);
+                    return new HistoryEntity.RoundResult(downBotId, topBotId, downBotWinCount, topBotWinCount, isDownBotWin);
+                }).collect(Collectors.toMap(HistoryEntity.RoundResult::getDownBotId, el -> el));
+
+    }
+
+    private void saveHistory(List<BotEntity> resultBotRating, Map<Integer, HistoryEntity.RoundResult> resultMap) {
+        var orderedBotIdList = resultBotRating.stream().map(BotEntity::getId).toList();
+        var resultRoundList = new ArrayList<>(resultMap.values());
+        var historyElement = new HistoryEntity(orderedBotIdList, resultRoundList);
+        historyRepository.save(historyElement);
+    }
+
+    private Integer botIndexById(List<BotEntity> bots, Integer id) {
+        for (int i = 0; i < bots.size(); i++) {
+            var bot = bots.get(i);
+            if (Objects.equals(bot.getId(), id)) return i;
+        }
+        return -1;
+    }
+
+    private void makeRounds() {
         var competitionBots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
         List<RoundEntity> roundList = new ArrayList<>();
         for (int i = 1; i < competitionBots.size(); i++) {
@@ -162,36 +208,6 @@ public class RoundServiceImpl implements RoundService {
         }
         roundList = roundRepository.saveAll(roundList);
         log.info("Успешно создано новое соревнование, включающее {} раундов", roundList.size());
-    }
-
-    /**
-     * @return возвращает Map, где ключ - id бота, а значение - Pair.of(признак выигрыша, id сильного соперника)
-     */
-    private Map<Integer, Pair<Boolean, Integer>> processResultByBots() {
-        var roundList = roundRepository.findRoundsByStatusBeforeGivenTime(PROD);
-        return roundList.stream()
-                .collect(Collectors.groupingBy(round -> round.getDownBot().getId()))
-                .entrySet()
-                .stream()
-                .map(roundsGroup -> {
-                    var rounds = roundsGroup.getValue();
-                    var downBotId = roundsGroup.getKey();
-                    var topBotId = rounds.get(0).getTopBot().getId();
-                    var downBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.DOWN)).count();
-                    var topBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.TOP)).count();
-                    return downBotWinCount > topBotWinCount ?
-                            Pair.of(downBotId, Pair.of(true, topBotId)) :
-                            Pair.of(downBotId, Pair.of(false, topBotId));
-                }).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-
-    }
-
-    private Integer botIndexById(List<BotEntity> bots, Integer id) {
-        for (int i = 0; i < bots.size(); i++) {
-            var bot = bots.get(i);
-            if (Objects.equals(bot.getId(), id)) return i;
-        }
-        return -1;
     }
 
     @Override
