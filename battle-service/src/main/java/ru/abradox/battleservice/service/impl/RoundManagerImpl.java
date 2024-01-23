@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.abradox.battleservice.model.RoundRepository;
 import ru.abradox.battleservice.service.RoundManager;
 import ru.abradox.battleservice.service.RoundService;
+import ru.abradox.platformapi.battle.StatusRound;
 import ru.abradox.platformapi.battle.TypeRound;
 
 import java.time.Duration;
@@ -28,7 +29,7 @@ public class RoundManagerImpl implements RoundManager {
     @SchedulerLock(name = "completeOldRounds", lockAtMostFor = "1s", lockAtLeastFor = "1s")
     public void completeOldRounds() {
         var timeNow = LocalDateTime.now();
-        var notFinishedRoundList = roundRepository.findAllByResultIsNull();
+        var notFinishedRoundList = roundRepository.findAllByStatus(StatusRound.PROGRESS);
         notFinishedRoundList.forEach(round -> {
             var updateTime = round.getUpdateTime();
             var duration = Duration.between(updateTime, timeNow);

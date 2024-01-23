@@ -44,7 +44,7 @@ public class TokenHolder {
     }
 
     @Async
-    @Scheduled(fixedRate = 1 * 1000)
+    @Scheduled(fixedRate = 1000)
     protected void updateTokens() {
         tokenClient.getNotBlockedTokens()
                 .doOnNext(responseTokens -> {
@@ -55,7 +55,7 @@ public class TokenHolder {
                     ));
                     tokens.keySet().removeIf(id -> !responseTokensMap.containsKey(id));
                     tokens.putAll(responseTokensMap);
-                    log.info("Успешно получены активные токены [{}]", tokens.keySet());
+                    log.debug("Успешно получены активные токены [{}]", tokens.keySet());
                 })
                 .subscribe();
     }

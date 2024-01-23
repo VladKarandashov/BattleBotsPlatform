@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 import ru.abradox.platformapi.battle.ResultRound;
+import ru.abradox.platformapi.battle.StatusRound;
 import ru.abradox.platformapi.battle.TypeRound;
 import ru.abradox.platformapi.cardgame.CardDto;
 import ru.abradox.platformapi.cardgame.TableDto;
@@ -48,6 +49,8 @@ public class RoundState {
     private LocalDateTime updateTime;
 
     @Indexed
+    private StatusRound status;
+
     private ResultRound result;
 
     public RoundState(UUID id, TypeRound type, UUID topBotToken, UUID downBotToken, List<CardDto> deck,
@@ -64,6 +67,7 @@ public class RoundState {
         this.downBotCards = new HashSet<>(downBotCards);
         this.table = new HashSet<>();
         this.updateTime = LocalDateTime.now();
+        this.status = StatusRound.PROGRESS;
     }
 
     public void changeActivity() {
@@ -86,10 +90,13 @@ public class RoundState {
 
         if (attacker.getHandCards().isEmpty() && defender.getHandCards().isEmpty()) {
             result = ResultRound.DRAW;
+            status = StatusRound.FINISHED;
         } else if (attacker.getHandCards().isEmpty()) {
             result = isAttacker(topBotToken) ? ResultRound.TOP : ResultRound.DOWN;
+            status = StatusRound.FINISHED;
         } else if (defender.getHandCards().isEmpty()) {
             result = isDefender(topBotToken) ? ResultRound.TOP : ResultRound.DOWN;
+            status = StatusRound.FINISHED;
         }
     }
 

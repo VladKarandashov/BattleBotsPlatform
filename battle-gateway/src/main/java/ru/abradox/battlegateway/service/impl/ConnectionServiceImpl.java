@@ -44,10 +44,11 @@ public class ConnectionServiceImpl implements ConnectionService {
         WebSocketSession session = connections.get(botToken);
         if (session != null && session.isOpen()) {
             var response = writeServerResponseAsJson(serverResponse);
+            log.info("Отправляю {} для пользователя {}", serverResponse, botToken);
             session.send(Mono.just(session.textMessage(response))).subscribe(); // Отправляем сообщение
             return;
         }
-        log.info("Сообщение для пользователя {} не может быть доставлено", botToken);
+        log.info("Сообщение {} для пользователя {} не может быть доставлено", serverResponse, botToken);
         if (connections.containsKey(botToken)) closeConnection(botToken);
     }
 
@@ -80,8 +81,12 @@ public class ConnectionServiceImpl implements ConnectionService {
         return objectMapper.writeValueAsString(response);
     }
 
-    @SneakyThrows
     private BotAction readActionFromJson(String message) {
-        return objectMapper.readValue(message, BotAction.class);
+        try {
+            return objectMapper.readValue(message, BotAction.class);
+        } catch (Exception e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
     }
 }

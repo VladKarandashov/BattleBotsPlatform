@@ -29,7 +29,7 @@ public interface RoundRepository extends JpaRepository<RoundEntity, UUID> {
     @Query("SELECT r FROM RoundEntity r " +
             "JOIN FETCH r.topBot tb " +
             "JOIN FETCH r.downBot db " +
-            "WHERE r.status = 'WAIT' AND r.type = 'PROD' AND tb.isPlay = false")
+            "WHERE r.status = 'WAIT' AND r.type = 'PROD' AND tb.isPlay = false AND db.isPlay = false")
     List<RoundEntity> findWaitProdRoundsWithNotPlayBots();
 
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN false ELSE true END " +

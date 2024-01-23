@@ -10,6 +10,7 @@ import ru.abradox.battleservice.model.RoundState;
 import ru.abradox.battleservice.service.GameService;
 import ru.abradox.platformapi.battle.BotWrapper;
 import ru.abradox.platformapi.battle.ResultRound;
+import ru.abradox.platformapi.battle.StatusRound;
 import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.cardgame.CardDto;
@@ -235,8 +236,10 @@ public class CardGameService implements GameService {
     private void giveUpAction(RoundState round, UUID token) {
         // ЗАВЕРШИТЬ ПАРТИЮ
         if (token.equals(round.getTopBotToken())) {
+            round.setStatus(StatusRound.FINISHED);
             round.setResult(ResultRound.DOWN);
         } else {
+            round.setStatus(StatusRound.FINISHED);
             round.setResult(ResultRound.TOP);
         }
         finishRound(round);
@@ -252,6 +255,7 @@ public class CardGameService implements GameService {
     }
 
     private void finishRound(RoundState round) {
+        round = roundRepository.save(round);
         var result = round.getResult();
         var topBotToken = round.getTopBotToken();
         var downBotToken = round.getDownBotToken();

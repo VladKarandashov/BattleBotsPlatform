@@ -31,7 +31,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
                 connectionService.closeConnection(uuid);
             }
         });
-        log.info("Подключено {} ботов", connections.size());
+        log.debug("Подключено {} ботов", connections.size());
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-        log.info("Послал информацию о {} активных подключениях", activeTokens.size());
+        log.debug("Послал информацию о {} активных подключениях", activeTokens.size());
         rabbitTemplate.convertAndSend("active-connections", "", activeTokens);
     }
 }

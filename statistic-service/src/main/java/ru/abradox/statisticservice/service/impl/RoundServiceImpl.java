@@ -228,7 +228,7 @@ public class RoundServiceImpl implements RoundService {
         oldRounds.forEach(round -> {
             log.info("Обнаружена задержка в раунде {}", round.getId());
             var bot1 = round.getTopBot();
-            var bot2 = round.getTopBot();
+            var bot2 = round.getDownBot();
             rabbitTemplate.convertAndSend("wanted-round", "",
                     new WantedRound(round.getId(), round.getType(), bot1.getToken(), bot2.getToken()));
         });
