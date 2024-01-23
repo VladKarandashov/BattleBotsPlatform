@@ -13,7 +13,7 @@ import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.battle.event.WantedRound;
 import ru.abradox.platformapi.statistic.CompetitionInfo;
-import ru.abradox.platformapi.statistic.RoundResult;
+import ru.abradox.statisticservice.model.dto.RoundResult;
 import ru.abradox.statisticservice.model.entity.BotEntity;
 import ru.abradox.statisticservice.model.entity.HistoryEntity;
 import ru.abradox.statisticservice.model.entity.RoundEntity;
@@ -255,6 +255,11 @@ public class RoundServiceImpl implements RoundService {
 
     @Override
     public CompetitionInfo getCompetitionInfo() {
+
+    }
+
+    @Override
+    public CompetitionInfo getHistoryInfo() {
 
     }
 }

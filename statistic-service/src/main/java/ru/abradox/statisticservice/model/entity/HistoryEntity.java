@@ -4,7 +4,7 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
-import ru.abradox.platformapi.statistic.RoundResult;
+import ru.abradox.statisticservice.model.dto.RoundResult;
 
 import java.util.List;
 

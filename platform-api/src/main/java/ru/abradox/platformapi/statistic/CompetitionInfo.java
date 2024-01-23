@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CompetitionInfo {
 
-    private List<Integer> orderedBots;
+    private Integer id;
 
-    private List<RoundInfo> roundResults;
+    private List<BotInfo> orderedBots;
 
-    private List<HistoryInfo> history;
+    private List<RoundInfo> roundInfo;
 }

@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RoundInfo {
 
-    private Integer downBotId;
-    private Integer topBotId;
+    private Integer downBotPosition;
+    private Integer topBotPosition;
     private Long downBotWinCount;
     private Long topBotWinCount;
+    private Long drawCount;
+    private Long leftCount;
+    private Boolean isPlay;
 }

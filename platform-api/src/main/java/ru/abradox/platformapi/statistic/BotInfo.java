@@ -4,16 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HistoryInfo {
+public class BotInfo {
 
-    private Integer id;
+    private UUID token;
 
-    private List<Integer> orderedBots;
+    private Integer position;
 
-    private List<RoundResult> roundResults;
+    private Boolean isActive;
 }

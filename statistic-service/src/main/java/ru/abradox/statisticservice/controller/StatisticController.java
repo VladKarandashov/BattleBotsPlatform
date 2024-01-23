@@ -8,11 +8,16 @@ import ru.abradox.statisticservice.service.RoundService;
 
 @RestController
 @RequiredArgsConstructor
-public class RoundController {
+public class StatisticController {
 
     private final RoundService roundService;
 
-    @GetMapping("/api/v1/round")
+    @GetMapping("/api/v1/history")
+    public CompetitionInfo getHistoryInfo() {
+        return roundService.getHistoryInfo();
+    }
+
+    @GetMapping("/api/v1/competition")
     public CompetitionInfo getCompetitionInfo() {
         return roundService.getCompetitionInfo();
     }

@@ -16,4 +16,6 @@ public interface RoundService {
     void validateRounds();
 
     CompetitionInfo getCompetitionInfo();
+
+    CompetitionInfo getHistoryInfo();
 }
