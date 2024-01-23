@@ -4,6 +4,7 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
+import ru.abradox.platformapi.statistic.RoundResult;
 
 import java.util.List;
 
@@ -31,16 +32,5 @@ public class HistoryEntity {
     public HistoryEntity(List<Integer> orderedBots, List<RoundResult> roundResults) {
         this.orderedBots = orderedBots;
         this.roundResults = roundResults;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RoundResult {
-        private Integer downBotId;
-        private Integer topBotId;
-        private Long downBotWinCount;
-        private Long topBotWinCount;
-        private Boolean isDownBotWin;
     }
 }

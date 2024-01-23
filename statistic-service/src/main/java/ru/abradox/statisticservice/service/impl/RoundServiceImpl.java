@@ -12,6 +12,7 @@ import ru.abradox.platformapi.battle.TypeRound;
 import ru.abradox.platformapi.battle.event.FinishRound;
 import ru.abradox.platformapi.battle.event.StartRound;
 import ru.abradox.platformapi.battle.event.WantedRound;
+import ru.abradox.platformapi.statistic.RoundResult;
 import ru.abradox.statisticservice.model.entity.BotEntity;
 import ru.abradox.statisticservice.model.entity.HistoryEntity;
 import ru.abradox.statisticservice.model.entity.RoundEntity;
@@ -123,10 +124,11 @@ public class RoundServiceImpl implements RoundService {
         if (!areAllProdRoundsComplete) return;
         // сканируем результаты PROD партий
         var resultMap = processResultByDownBots();
-        // перестраиваем рейтинг
-        var resultBotRating = getBotRating(resultMap);
+        var orderedBots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
         // сохраняем рейтинг в историю
-        saveHistory(resultBotRating, resultMap);
+        saveHistory(orderedBots, resultMap);
+        // перестраиваем рейтинг
+        var resultBotRating = getBotRating(orderedBots, resultMap);
         // добавляем в рейтинг новых ботов
         resultBotRating.addAll(botRepository.findAllByTypeAndPositionIsNull(TypeToken.PROD));
         // проставляем новые position
@@ -140,8 +142,7 @@ public class RoundServiceImpl implements RoundService {
         makeRounds();
     }
 
-    private List<BotEntity> getBotRating(Map<Integer, HistoryEntity.RoundResult> resultMap) {
-        var orderedBots = botRepository.findAllByTypeAndPositionIsNotNullOrderByPosition(TypeToken.PROD);
+    private List<BotEntity> getBotRating(List<BotEntity> orderedBots, Map<Integer, RoundResult> resultMap) {
         var resultBotRating = new LinkedList<BotEntity>();
         orderedBots.forEach(bot -> {
             var botResult = resultMap.get(bot.getId());
@@ -158,7 +159,7 @@ public class RoundServiceImpl implements RoundService {
         return resultBotRating;
     }
 
-    private Map<Integer, HistoryEntity.RoundResult> processResultByDownBots() {
+    private Map<Integer, RoundResult> processResultByDownBots() {
         var roundList = roundRepository.findRoundsByStatusBeforeGivenTime(PROD);
         return roundList.stream()
                 .collect(Collectors.groupingBy(round -> round.getDownBot().getId()))
@@ -171,13 +172,14 @@ public class RoundServiceImpl implements RoundService {
                     var downBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.DOWN)).count();
                     var topBotWinCount = rounds.stream().filter(round -> round.getResult().equals(ResultRound.TOP)).count();
                     var isDownBotWin = (downBotWinCount > topBotWinCount);
-                    return new HistoryEntity.RoundResult(downBotId, topBotId, downBotWinCount, topBotWinCount, isDownBotWin);
-                }).collect(Collectors.toMap(HistoryEntity.RoundResult::getDownBotId, el -> el));
+                    return new RoundResult(downBotId, topBotId, downBotWinCount, topBotWinCount, isDownBotWin);
+                }).collect(Collectors.toMap(RoundResult::getDownBotId, el -> el));
 
     }
 
-    private void saveHistory(List<BotEntity> resultBotRating, Map<Integer, HistoryEntity.RoundResult> resultMap) {
-        var orderedBotIdList = resultBotRating.stream().map(BotEntity::getId).toList();
+    private void saveHistory(List<BotEntity> botRatingBeforeCompetition, Map<Integer, RoundResult> resultMap) {
+        if (botRatingBeforeCompetition.isEmpty()) return;
+        var orderedBotIdList = botRatingBeforeCompetition.stream().map(BotEntity::getId).toList();
         var resultRoundList = new ArrayList<>(resultMap.values());
         var historyElement = new HistoryEntity(orderedBotIdList, resultRoundList);
         historyRepository.save(historyElement);
