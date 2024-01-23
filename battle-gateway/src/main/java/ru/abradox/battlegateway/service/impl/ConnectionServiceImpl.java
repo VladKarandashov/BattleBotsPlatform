@@ -1,6 +1,8 @@
 package ru.abradox.battlegateway.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -13,6 +15,7 @@ import ru.abradox.battlegateway.service.ConnectionService;
 import ru.abradox.platformapi.battle.BotWrapper;
 import ru.abradox.platformapi.cardgame.event.BotAction;
 import ru.abradox.platformapi.cardgame.event.ServerResponse;
+import ru.abradox.platformapi.cardgame.event.StatusCode;
 
 import java.util.Map;
 import java.util.Optional;
@@ -28,15 +31,16 @@ public class ConnectionServiceImpl implements ConnectionService {
     private final Map<UUID, WebSocketSession> connections = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final Validator validator;
     private final RabbitTemplate rabbitTemplate;
 
     @Override
     // TODO прикрутить res4j: rateLimiter и сообщение NOT SPAM
     public void handleUserMessage(UUID botToken, String userMessage) {
         log.info("От пользователя {} получено сообщение {}", botToken, userMessage);
-        // TODO валидация входящего сообщения
-        var action = new BotWrapper<>(botToken, readActionFromJson(userMessage));
-        rabbitTemplate.convertAndSend("bot-actions", "", action);
+        var action = readActionFromJson(botToken, userMessage);
+        var request = new BotWrapper<>(botToken, action);
+        rabbitTemplate.convertAndSend("bot-actions", "", request);
     }
 
     @Override
@@ -81,11 +85,18 @@ public class ConnectionServiceImpl implements ConnectionService {
         return objectMapper.writeValueAsString(response);
     }
 
-    private BotAction readActionFromJson(String message) {
+    private BotAction readActionFromJson(UUID botToken, String message) {
         try {
-            return objectMapper.readValue(message, BotAction.class);
+            var action = objectMapper.readValue(message, BotAction.class);
+            var violations = validator.validate(action);
+            if (!violations.isEmpty()) {
+                log.error("Ошибки валидации: {}", violations);
+                throw new ValidationException("Validation failed!");
+            }
+            return action;
         } catch (Exception e) {
             log.error("", e);
+            sendMessageToBot(botToken, new ServerResponse(StatusCode.BAD_REQUEST));
             throw new RuntimeException(e);
         }
     }
