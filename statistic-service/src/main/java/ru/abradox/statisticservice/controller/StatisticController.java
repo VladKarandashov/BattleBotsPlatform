@@ -15,13 +15,13 @@ public class StatisticController {
 
     private final RoundService roundService;
 
-    @GetMapping("/api/v1/history")
-    public List<HistoryInfo> getHistoryInfo() {
-        return roundService.getHistoryInfo();
-    }
-
     @GetMapping("/api/v1/competition")
     public CompetitionInfo getCompetitionInfo() {
         return roundService.getCompetitionInfo();
+    }
+
+    @GetMapping("/api/v1/history")
+    public List<HistoryInfo> getHistoryInfo() {
+        return roundService.getHistoryInfo();
     }
 }
