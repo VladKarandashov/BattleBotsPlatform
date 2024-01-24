@@ -2,7 +2,7 @@ package ru.abradox.statisticservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.abradox.client.token.TypeToken;
+import ru.abradox.platformapi.token.TypeToken;
 
 import java.util.UUID;
 

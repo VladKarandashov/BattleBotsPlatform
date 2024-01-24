@@ -3,8 +3,8 @@ package ru.abradox.statisticservice.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
-import ru.abradox.client.statistic.StatusRound;
 import ru.abradox.platformapi.battle.ResultRound;
+import ru.abradox.platformapi.battle.StatusRound;
 import ru.abradox.platformapi.battle.TypeRound;
 
 import java.time.LocalDateTime;

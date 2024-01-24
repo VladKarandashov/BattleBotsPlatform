@@ -1,4 +1,4 @@
-package ru.abradox.common;
+package ru.abradox.platformapi.crm;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

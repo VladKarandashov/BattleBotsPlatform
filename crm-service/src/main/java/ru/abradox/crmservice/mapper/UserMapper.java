@@ -2,9 +2,9 @@ package ru.abradox.crmservice.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import ru.abradox.common.ProviderUserInfo;
-import ru.abradox.common.UserInfo;
 import ru.abradox.crmservice.entity.UserEntity;
+import ru.abradox.platformapi.crm.ProviderUserInfo;
+import ru.abradox.platformapi.crm.UserInfo;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {

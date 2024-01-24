@@ -1,4 +1,4 @@
-package ru.abradox.common;
+package ru.abradox.platformapi.crm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

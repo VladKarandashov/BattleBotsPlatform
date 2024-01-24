@@ -1,4 +1,4 @@
-package ru.abradox.client.token;
+package ru.abradox.platformapi.token;
 
 public enum TypeToken {
     DEV, PROD

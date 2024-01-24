@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.abradox.client.token.request.CreateTokenRequest;
 import ru.abradox.common.response.SimpleResponse;
+import ru.abradox.platformapi.token.TokenDto;
+import ru.abradox.platformapi.token.TypeToken;
 
 import java.net.URI;
 import java.util.List;

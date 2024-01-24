@@ -3,7 +3,7 @@ package ru.abradox.statisticservice.model.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import ru.abradox.client.statistic.StatusRound;
+import ru.abradox.platformapi.battle.StatusRound;
 import ru.abradox.platformapi.battle.TypeRound;
 import ru.abradox.statisticservice.model.entity.RoundEntity;
 

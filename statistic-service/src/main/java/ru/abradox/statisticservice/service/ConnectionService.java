@@ -1,6 +1,7 @@
 package ru.abradox.statisticservice.service;
 
-import ru.abradox.client.token.TokenDto;
+
+import ru.abradox.platformapi.token.TokenDto;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.abradox.client.token.TokenDto;
+import ru.abradox.platformapi.token.TokenDto;
 import ru.abradox.statisticservice.model.entity.BotEntity;
 import ru.abradox.statisticservice.model.repository.BotRepository;
 import ru.abradox.statisticservice.service.ConnectionService;

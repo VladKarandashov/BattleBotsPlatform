@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.abradox.client.token.TypeToken;
+import ru.abradox.platformapi.token.TypeToken;
 
 @Data
 @NoArgsConstructor

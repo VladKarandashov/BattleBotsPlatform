@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import ru.abradox.client.token.TokenDto;
 import ru.abradox.client.token.TokenServiceClient;
 
 import ru.abradox.common.response.SimpleResponse;
 import ru.abradox.middlewareservice.dto.request.CreateTokenRequest;
 import ru.abradox.middlewareservice.service.TokenService;
+import ru.abradox.platformapi.token.TokenDto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.abradox.client.token;
+package ru.abradox.platformapi.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -9,10 +9,10 @@ import ru.abradox.crmservice.entity.UserEntity;
 import ru.abradox.crmservice.mapper.UserMapper;
 import ru.abradox.crmservice.repository.UserRepository;
 import ru.abradox.crmservice.service.AuthService;
-import ru.abradox.common.ProviderUserInfo;
-import ru.abradox.common.UserInfo;
 import ru.abradox.exception.BusinessException;
 import ru.abradox.exception.BusinessRedirectException;
+import ru.abradox.platformapi.crm.ProviderUserInfo;
+import ru.abradox.platformapi.crm.UserInfo;
 
 @Slf4j
 @Service

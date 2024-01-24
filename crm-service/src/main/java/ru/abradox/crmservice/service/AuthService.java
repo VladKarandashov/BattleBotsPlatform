@@ -1,7 +1,7 @@
 package ru.abradox.crmservice.service;
 
 import ru.abradox.crmservice.dto.request.CompleteRegistrationRequest;
-import ru.abradox.common.UserInfo;
+import ru.abradox.platformapi.crm.UserInfo;
 
 public interface AuthService {
 
