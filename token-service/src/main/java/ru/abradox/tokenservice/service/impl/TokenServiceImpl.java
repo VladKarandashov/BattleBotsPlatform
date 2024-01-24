@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.abradox.client.token.TypeToken;
 import ru.abradox.client.token.request.CreateTokenRequest;
 import ru.abradox.client.token.TokenDto;
 import ru.abradox.exception.BusinessException;
@@ -56,7 +57,10 @@ public class TokenServiceImpl implements TokenService {
 
         // проверяем количество уже выданных токенов для прода
         var userTokensCount = tokenRepository.countAllByUserIdAndType(userId, typeToken);
-        if (userTokensCount >= tokenProperties.getAllowedProdNumberOfTokensByUser()) {
+        var maxAllowedTokenCount = TypeToken.PROD.equals(typeToken) ?
+                tokenProperties.getAllowedProdNumberOfTokensByUser() :
+                tokenProperties.getAllowedDevNumberOfTokensByUser();
+        if (userTokensCount >= maxAllowedTokenCount) {
             throw new BusinessException(1000, "Максимальное количество токенов такого типа уже достигнуто");
         }
 

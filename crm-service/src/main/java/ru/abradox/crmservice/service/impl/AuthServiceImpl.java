@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.abradox.crmservice.config.CrmProperties;
 import ru.abradox.crmservice.dto.request.CompleteRegistrationRequest;
 import ru.abradox.crmservice.entity.UserEntity;
+import ru.abradox.crmservice.mapper.UserMapper;
 import ru.abradox.crmservice.repository.UserRepository;
 import ru.abradox.crmservice.service.AuthService;
 import ru.abradox.common.ProviderUserInfo;
@@ -16,9 +17,9 @@ import ru.abradox.exception.BusinessRedirectException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-// TODO внедрить mapstruct
 public class AuthServiceImpl implements AuthService {
 
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final CrmProperties crmProperties;
 
@@ -29,15 +30,7 @@ public class AuthServiceImpl implements AuthService {
             log.info("User с providerId={} ЗАБЛОКИРОВАН -> отправляю на страницу блока", providerUserId);
             throw new BusinessRedirectException("/crm/view/blocked", 301);
         }
-        return UserInfo.builder()
-                .id(user.getId())
-                .login(user.getLogin())
-                .email(user.getEmail())
-                .nickName(user.getNickName())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .fullName(user.getFullName())
-                .build();
+        return userMapper.mapUserEntityToUserInfo(user);
     }
 
     @Override
@@ -63,17 +56,8 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByNickName(request.getNickName())) {
             throw new BusinessException(1408, "Такой nickname уже существует");
         }
-        // TODO валидация телеграмма
-        var user = UserEntity.builder()
-                .providerId(providerUserInfo.getProviderId())
-                .login(providerUserInfo.getLogin())
-                .email(providerUserInfo.getEmail())
-                .nickName(request.getNickName())
-                .firstName(providerUserInfo.getFirstName())
-                .lastName(providerUserInfo.getLastName())
-                .fullName(providerUserInfo.getFullName())
-                .blocked(false)
-                .build();
+        var user = userMapper.mapProviderUserInfoToUserEntity(providerUserInfo);
+        user.setNickName(request.getNickName());
         userRepository.save(user);
     }
 

@@ -179,7 +179,7 @@ public class CardGameService implements GameService {
         }
 
         // проверить, что этими картами можно отбиться без дублирования
-        // сделать отбитие в картах TODO
+        // сделать отбитие в картах
         var trumpSuit = round.getLastCard().getSuit();
 
         for (TableDto tableDto : round.getTable()) {

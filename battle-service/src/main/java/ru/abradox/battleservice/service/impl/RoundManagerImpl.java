@@ -39,7 +39,7 @@ public class RoundManagerImpl implements RoundManager {
                 log.info("Завершаю раунд {} в связи с истечением срока хода", round.getId());
                 CompletableFuture.runAsync(() -> roundService.completeOldRound(round));
             } else if (TypeRound.PROD.equals(type) && duration.compareTo(Duration.ofSeconds(4)) >= 0) {
-                // PROD ход длиннее 90 секунд - завершаем
+                // PROD ход длиннее 4 секунд - завершаем
                 log.info("Завершаю раунд {} в связи с истечением срока хода", round.getId());
                 CompletableFuture.runAsync(() -> roundService.completeOldRound(round));
             }
