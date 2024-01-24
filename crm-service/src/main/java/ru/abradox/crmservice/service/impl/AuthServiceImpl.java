@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.abradox.crmservice.config.CrmProperties;
-import ru.abradox.crmservice.dto.request.CompleteRegistrationRequest;
+import ru.abradox.client.crm.request.CompleteRegistrationRequest;
 import ru.abradox.crmservice.entity.UserEntity;
 import ru.abradox.crmservice.mapper.UserMapper;
 import ru.abradox.crmservice.repository.UserRepository;

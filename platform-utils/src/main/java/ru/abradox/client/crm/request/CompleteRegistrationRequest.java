@@ -1,4 +1,4 @@
-package ru.abradox.crmservice.dto.request;
+package ru.abradox.client.crm.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
