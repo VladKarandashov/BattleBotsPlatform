@@ -18,7 +18,6 @@ public class AuthServiceImpl implements AuthService {
     private final TokenHolder tokenHolder;
 
     @Override
-    // TODO прикрутить res4j: rateLimiter
     public boolean checkBotAccess(String botName, String botToken) {
         if (StringUtils.isBlank(botName)) return false;
         if (StringUtils.isBlank(botToken)) return false;

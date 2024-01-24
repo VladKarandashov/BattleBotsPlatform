@@ -31,7 +31,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     @CacheEvict(value = TOKEN_INFO_CACHE, key = "#userId")
-    // TODO навесить rate limit
     public SimpleResponse createToken(Integer userId, CreateTokenRequest request) {
         return tokenServiceClient.createToken(userId, request.getTitle(), request.getTypeToken());
     }

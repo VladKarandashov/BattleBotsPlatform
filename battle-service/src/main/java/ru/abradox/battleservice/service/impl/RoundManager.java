@@ -6,7 +6,6 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.abradox.battleservice.model.RoundRepository;
-import ru.abradox.battleservice.service.RoundManager;
 import ru.abradox.battleservice.service.RoundService;
 import ru.abradox.platformapi.battle.StatusRound;
 import ru.abradox.platformapi.battle.TypeRound;
@@ -19,12 +18,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RoundManagerImpl implements RoundManager {
+public class RoundManager {
 
     private final RoundService roundService;
     private final RoundRepository roundRepository;
 
-    @Override
     @Scheduled(fixedDelay = 2, timeUnit = TimeUnit.SECONDS)
     @SchedulerLock(name = "completeOldRounds", lockAtMostFor = "1s", lockAtLeastFor = "1s")
     public void completeOldRounds() {

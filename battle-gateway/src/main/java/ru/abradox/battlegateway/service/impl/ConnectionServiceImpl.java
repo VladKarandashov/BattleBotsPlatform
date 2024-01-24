@@ -32,12 +32,17 @@ public class ConnectionServiceImpl implements ConnectionService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final Validator validator;
+    private final LimiterManager limiterManager;
     private final RabbitTemplate rabbitTemplate;
 
     @Override
-    // TODO прикрутить res4j: rateLimiter и сообщение NOT SPAM
     public void handleUserMessage(UUID botToken, String userMessage) {
         log.info("От пользователя {} получено сообщение {}", botToken, userMessage);
+        var limiter = limiterManager.getLimiter(botToken.toString());
+        if (!limiter.acquirePermission()) {
+            sendMessageToBot(botToken, new ServerResponse(StatusCode.NOT_SPAM));
+            return;
+        }
         var action = readActionFromJson(botToken, userMessage);
         var request = new BotWrapper<>(botToken, action);
         rabbitTemplate.convertAndSend("bot-actions", "", request);

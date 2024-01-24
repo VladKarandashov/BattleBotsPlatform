@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.abradox.battlegateway.client.token.TokenHolder;
-import ru.abradox.battlegateway.service.ConnectionManager;
 import ru.abradox.battlegateway.service.ConnectionService;
 
 import java.util.Optional;
@@ -15,13 +14,12 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ConnectionManagerImpl implements ConnectionManager {
+public class ConnectionManager {
 
     private final TokenHolder tokenHolder;
     private final RabbitTemplate rabbitTemplate;
     private final ConnectionService connectionService;
 
-    @Override
     @Async
     @Scheduled(fixedRate = 2 * 1000)
     public void clearConnectionsByTokens() {
@@ -34,7 +32,6 @@ public class ConnectionManagerImpl implements ConnectionManager {
         log.debug("Подключено {} ботов", connections.size());
     }
 
-    @Override
     @Async
     @Scheduled(fixedRate = 3 * 1000)
     public void processActiveConnections() {
