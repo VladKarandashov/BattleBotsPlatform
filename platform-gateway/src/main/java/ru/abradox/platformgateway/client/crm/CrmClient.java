@@ -24,7 +24,7 @@ public class CrmClient {
     public Mono<GenericResponse<UserInfo>> getUserById(String id) {
         var uri = loadBalancerClient.choose("crm-service").getUri();
         return webClient.get()
-                .uri(uri + "/api/v1/auth/user/{id}", id)
+                .uri(uri + "/internal/api/v1/auth/user/{id}", id)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<>() {
                 });

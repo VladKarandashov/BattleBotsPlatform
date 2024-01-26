@@ -26,7 +26,7 @@ public class AuthController {
      * @param providerUserId id пользователя от id-провайдера
      * @return http-ответ с userInfo и кодом 2** (если допустимо) или 3** (если требуются доп действия)
      */
-    @GetMapping("/api/v1/auth/user/{id}")
+    @GetMapping("/internal/api/v1/auth/user/{id}")
     public GenericResponse<UserInfo> getUserInfo(@PathVariable("id") String providerUserId) {
         log.info("Пришёл запрос на получение информации пользователя {}", providerUserId);
         return new GenericResponse<>(authService.getUserInfo(providerUserId));
