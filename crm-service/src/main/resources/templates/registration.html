@@ -25,7 +25,7 @@
     function sendNickname() {
         const nickname = document.getElementById('nickName').value;
 
-        fetch('api/v1/auth/completeRegistration', {
+        fetch('/crm/api/v1/auth/completeRegistration', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -33,9 +33,13 @@
             },
             body: JSON.stringify({ nickName: nickname })
         })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
+            .then(response => response.json())
+            .then(data => {
+                const statusCode = data.statusCode;
+                if (statusCode === 3000) {
+                    window.location.href = "/middleware/view";
+                } else if (statusCode === 1001) {
+                    console.log(data.message)
                 }
             })
             .catch(error => {
