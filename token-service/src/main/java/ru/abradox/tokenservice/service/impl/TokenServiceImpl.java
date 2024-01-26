@@ -17,6 +17,8 @@ import ru.abradox.tokenservice.service.TokenService;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.abradox.exception.ExceptionStatus.CREATE_TOKEN_ERROR;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -61,13 +63,13 @@ public class TokenServiceImpl implements TokenService {
                 tokenProperties.getAllowedProdNumberOfTokensByUser() :
                 tokenProperties.getAllowedDevNumberOfTokensByUser();
         if (userTokensCount >= maxAllowedTokenCount) {
-            throw new BusinessException(1000, "Максимальное количество токенов такого типа уже достигнуто");
+            throw new BusinessException(CREATE_TOKEN_ERROR, "Максимальное количество токенов такого типа уже достигнуто");
         }
 
         // проверяем существование бота с таким именем
         var isTitleExist = tokenRepository.existsByTitleIgnoreCase(botTitle);
         if (isTitleExist) {
-            throw new BusinessException(1000, "Бот с таким именем уже зарегистрирован");
+            throw new BusinessException(CREATE_TOKEN_ERROR, "Бот с таким именем уже зарегистрирован");
         }
 
         var token = new TokenEntity(userId, botTitle, typeToken);

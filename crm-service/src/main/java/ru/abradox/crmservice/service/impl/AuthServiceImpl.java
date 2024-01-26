@@ -3,16 +3,17 @@ package ru.abradox.crmservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.abradox.crmservice.config.CrmProperties;
 import ru.abradox.client.crm.request.CompleteRegistrationRequest;
 import ru.abradox.crmservice.entity.UserEntity;
 import ru.abradox.crmservice.mapper.UserMapper;
 import ru.abradox.crmservice.repository.UserRepository;
 import ru.abradox.crmservice.service.AuthService;
 import ru.abradox.exception.BusinessException;
-import ru.abradox.exception.BusinessRedirectException;
+import ru.abradox.exception.ExceptionStatus;
 import ru.abradox.platformapi.crm.ProviderUserInfo;
 import ru.abradox.platformapi.crm.UserInfo;
+
+import static ru.abradox.exception.ExceptionStatus.REGISTRATION_ERROR;
 
 @Slf4j
 @Service
@@ -21,14 +22,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
-    private final CrmProperties crmProperties;
 
     @Override
     public UserInfo getUserInfo(String providerUserId) {
         var user = findUserByProviderId(providerUserId);
         if (user.isBlocked()) {
             log.info("User с providerId={} ЗАБЛОКИРОВАН -> отправляю на страницу блока", providerUserId);
-            throw new BusinessRedirectException("/crm/view/blocked", 301);
+            throw new BusinessException(ExceptionStatus.BLOCKED_REDIRECT);
         }
         return userMapper.mapUserEntityToUserInfo(user);
     }
@@ -51,10 +51,10 @@ public class AuthServiceImpl implements AuthService {
         var providerUserInfo = ProviderUserInfo.parseProviderUserInfo(providerUserInfoEncodedJson);
         log.info("Получил providerUserInfo={}", providerUserInfo);
         if (userRepository.existsByProviderId(providerUserInfo.getProviderId())) {
-            throw new BusinessRedirectException(crmProperties.getPlatformUri(), 307);
+            throw new BusinessException(ExceptionStatus.PLATFORM_REDIRECT);
         }
         if (userRepository.existsByNickName(request.getNickName())) {
-            throw new BusinessException(1408, "Такой nickname уже существует");
+            throw new BusinessException(REGISTRATION_ERROR, "Такой nickname уже существует");
         }
         var user = userMapper.mapProviderUserInfoToUserEntity(providerUserInfo);
         user.setNickName(request.getNickName());
@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.findByProviderId(providerId)
                 .orElseThrow(() -> {
                     log.info("Не найден user с providerId={} -> отправляю на регистрацию", providerId);
-                    return new BusinessRedirectException("/crm/view/registration", 307);
+                    return new BusinessException(ExceptionStatus.REGISTRATION_REDIRECT);
                 });
     }
 }

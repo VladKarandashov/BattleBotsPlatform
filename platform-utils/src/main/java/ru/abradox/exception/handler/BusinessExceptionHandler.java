@@ -17,7 +17,7 @@ public class BusinessExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     ResponseEntity<GenericResponse<?>> handle(BusinessException e) {
         log.error("Возникло бизнес-исключение: ", e);
-        var response = new GenericResponse<>(e.getStatusCode(), e.getMessage(), e.getData());
+        var response = new GenericResponse<>(e.getStatusCode(), e.getMessage());
         return ResponseEntity.ok()
                 .header("error", Boolean.TRUE.toString())
                 .body(response);

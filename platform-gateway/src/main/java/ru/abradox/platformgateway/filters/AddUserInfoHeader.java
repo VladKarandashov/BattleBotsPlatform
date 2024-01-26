@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.util.UriEncoder;
+import ru.abradox.exception.BusinessException;
 import ru.abradox.platformapi.crm.UserInfo;
 import ru.abradox.platformgateway.client.crm.CrmClient;
 
@@ -33,9 +34,15 @@ public class AddUserInfoHeader extends AbstractGatewayFilterFactory<AddUserInfoH
                     return attributes.get("id").toString();
                 })
                 .flatMap(crmClient::getUserById)
-                .doOnNext(userInfo -> {
+                .doOnNext(userInfoResponse -> {
+
+                    if (userInfoResponse.getStatusCode() != 0) {
+                        throw new BusinessException(userInfoResponse);
+                    }
+
                     var request = exchange.getRequest();
                     var httpHeaders = HttpHeaders.writableHttpHeaders(request.getHeaders());
+                    var userInfo = userInfoResponse.getData();
                     var userInfoJson = produceUserInfoJson(userInfo);
                     var userInfoJsonEncoded = UriEncoder.encode(userInfoJson);
                     httpHeaders.add("user", userInfoJsonEncoded);

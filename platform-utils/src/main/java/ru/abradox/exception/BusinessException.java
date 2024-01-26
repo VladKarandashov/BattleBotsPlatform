@@ -1,28 +1,26 @@
 package ru.abradox.exception;
 
 import lombok.Getter;
+import ru.abradox.common.response.GenericResponse;
 
 @Getter
 public class BusinessException extends RuntimeException {
+
     private final int statusCode;
 
-    private final Object data;
-
-    public BusinessException(int statusCode, Object data) {
-        this.statusCode = statusCode;
-        this.data = data;
+    public BusinessException(ExceptionStatus status) {
+        super(status.getMessage());
+        this.statusCode = status.getCode();
     }
 
-    public BusinessException(int statusCode, String message) {
+    public BusinessException(ExceptionStatus status, String message) {
         super(message);
-        this.statusCode = statusCode;
-        this.data = null;
+        this.statusCode = status.getCode();
     }
 
-    public BusinessException(int statusCode, String message, Object data) {
-        super(message);
-        this.statusCode = statusCode;
-        this.data = data;
+    public BusinessException(GenericResponse<?> response) {
+        super(response.getMessage());
+        this.statusCode = response.getStatusCode();
     }
 
     @Override
@@ -30,7 +28,6 @@ public class BusinessException extends RuntimeException {
         return "BusinessException{" +
                 "statusCode=" + getStatusCode() +
                 "message=" + getMessage() +
-                ", data=" + getData() +
                 '}';
     }
 }
