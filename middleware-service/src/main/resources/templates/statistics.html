@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика</title>
+</head>
+<body>
+
+<button id="submitBtn">Напечатать в консоль текущую статистику</button>
+
+<script>
+    document.getElementById('submitBtn').addEventListener('click', function () {
+        fetch('/middleware/api/v1/competition', {
+            method: 'GET',
+            credentials: "include"
+        })
+            .then(response => {
+                console.log(response.json())
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+<button id="submitBtn2">Напечатать в консоль историческую статистику</button>
+
+<script>
+    document.getElementById('submitBtn2').addEventListener('click', function () {
+        fetch('/middleware/api/v1/history', {
+            method: 'GET',
+            credentials: "include"
+        })
+            .then(response => {
+                console.log(response.json())
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+</body>
+</html>
