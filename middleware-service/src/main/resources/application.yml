@@ -8,7 +8,22 @@ logging:
         web:
           filter:
             CommonsRequestLoggingFilter: DEBUG
+  file:
+    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"
 
 spring:
   application:
     name: middleware-service
+    instance_id: ${random.uuid}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true

@@ -20,3 +20,20 @@ spring:
     database: postgresql
   application:
     name: token-service
+    instance_id: ${random.uuid}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true
+
+logging:
+  file:
+    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"

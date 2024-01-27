@@ -20,9 +20,24 @@ spring:
     database: postgresql
   application:
     name: statistic-service
+    instance_id: ${random.uuid}
   rabbitmq:
     host: 82.97.244.140
     port: 5672
     username: gen_user
     password: UllXbQ168mlP4567UIGIUhiofd
     virtual-host: default_vhost
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true
+logging:
+  file:
+    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"

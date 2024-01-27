@@ -1,9 +1,9 @@
-server.port: 8761
+server:
+  port: 8761
 
 eureka:
   client:
     register-with-eureka: false
-    fetch-registry: false
 
 spring:
   rabbitmq:
@@ -12,3 +12,18 @@ spring:
     username: gen_user
     password: UllXbQ168mlP4567UIGIUhiofd
     virtual-host: default_vhost
+  boot:
+    admin:
+      context-path: /admin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true

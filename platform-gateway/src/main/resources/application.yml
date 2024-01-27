@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: platform-gateway-service
+    instance_id: ${random.uuid}
   cloud:
     gateway:
       routes:
