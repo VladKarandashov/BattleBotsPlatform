@@ -81,13 +81,13 @@ public class RoundServiceImpl implements RoundService {
     public void startProdRounds() {
         var freeProdRounds = roundRepository.findWaitProdRoundsWithNotPlayBots();
         if (freeProdRounds.isEmpty()) return;
-        var futurePlayingBots = new HashSet<BotEntity>();
+        var futurePlayingBots = new HashSet<Integer>();
         freeProdRounds.forEach(round -> {
             var topBot = round.getTopBot();
             var downBot = round.getDownBot();
-            if (!futurePlayingBots.contains(topBot) && !futurePlayingBots.contains(downBot)) {
-                futurePlayingBots.add(topBot);
-                futurePlayingBots.add(downBot);
+            if (!futurePlayingBots.contains(topBot.getId()) && !futurePlayingBots.contains(downBot.getId())) {
+                futurePlayingBots.add(topBot.getId());
+                futurePlayingBots.add(downBot.getId());
                 startRound(round, topBot, downBot);
             }
         });

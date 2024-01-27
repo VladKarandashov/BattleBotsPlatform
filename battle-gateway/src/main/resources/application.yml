@@ -10,3 +10,10 @@ spring:
     username: gen_user
     password: UllXbQ168mlP4567UIGIUhiofd
     virtual-host: default_vhost
+    listener:
+      simple:
+        concurrency: 10
+        max-concurrency: 30
+        retry:
+          enabled: false
+        prefetch: 1

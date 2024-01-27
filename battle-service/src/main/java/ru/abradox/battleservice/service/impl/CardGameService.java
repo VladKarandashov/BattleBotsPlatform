@@ -116,7 +116,7 @@ public class CardGameService implements GameService {
         if (cards.size() + round.getTable().size() > 6) {
             throw new ActionException(new ServerResponse(StatusCode.TOO_MANY_CARDS_ON_TABLE));
         }
-        if (cards.size() + round.getTable().size() > opponentState.getHandCards().size()) {
+        if (cards.size() > opponentState.getHandCards().size()) {
             throw new ActionException(new ServerResponse(StatusCode.TOO_MANY_CARDS_FOR_OPPONENT));
         }
         if (!botState.getHandCards().containsAll(cards)) {

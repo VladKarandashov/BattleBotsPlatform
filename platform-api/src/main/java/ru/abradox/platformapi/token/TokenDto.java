@@ -1,5 +1,6 @@
 package ru.abradox.platformapi.token;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class TokenDto {
 
     private boolean blocked;
 
+    @JsonIgnore
     public UUID getUid() {
         return UUID.fromString(id);
     }
