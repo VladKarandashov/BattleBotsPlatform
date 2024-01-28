@@ -6,6 +6,9 @@ eureka:
     register-with-eureka: false
 
 spring:
+  application:
+    name: admin-service
+    instance_id: ${random.uuid}
   rabbitmq:
     host: 82.97.244.140
     port: 5672

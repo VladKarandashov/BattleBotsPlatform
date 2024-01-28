@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.util.UriEncoder;
 import ru.abradox.platformapi.crm.UserInfo;
 import ru.abradox.platformgateway.client.crm.CrmClient;
-import ru.abradox.platformgateway.exception.UserInfoException;
 
 @Slf4j
 @Component
@@ -35,11 +34,6 @@ public class AddUserInfoHeader extends AbstractGatewayFilterFactory<AddUserInfoH
                 })
                 .flatMap(crmClient::getUserById)
                 .doOnNext(userInfoResponse -> {
-
-                    if (userInfoResponse.getStatusCode() != 0) {
-                        throw new UserInfoException(userInfoResponse);
-                    }
-
                     var request = exchange.getRequest();
                     var httpHeaders = HttpHeaders.writableHttpHeaders(request.getHeaders());
                     var userInfo = userInfoResponse.getData();
