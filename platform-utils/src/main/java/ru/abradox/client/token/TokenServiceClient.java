@@ -9,7 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.abradox.client.token.request.CreateTokenRequest;
-import ru.abradox.common.response.SimpleResponse;
+import ru.abradox.platformapi.common.response.SimpleResponse;
 import ru.abradox.platformapi.token.TokenDto;
 import ru.abradox.platformapi.token.TypeToken;
 

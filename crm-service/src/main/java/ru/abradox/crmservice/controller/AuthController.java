@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.abradox.client.crm.request.CompleteRegistrationRequest;
-import ru.abradox.common.response.GenericResponse;
 import ru.abradox.crmservice.service.AuthService;
 import ru.abradox.exception.BusinessException;
 import ru.abradox.exception.ExceptionStatus;
+import ru.abradox.platformapi.common.response.GenericResponse;
 import ru.abradox.platformapi.crm.UserInfo;
 
 @Slf4j

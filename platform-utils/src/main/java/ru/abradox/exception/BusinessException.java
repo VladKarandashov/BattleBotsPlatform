@@ -1,7 +1,7 @@
 package ru.abradox.exception;
 
 import lombok.Getter;
-import ru.abradox.common.response.GenericResponse;
+import ru.abradox.platformapi.common.response.GenericResponse;
 
 @Getter
 public class BusinessException extends RuntimeException {

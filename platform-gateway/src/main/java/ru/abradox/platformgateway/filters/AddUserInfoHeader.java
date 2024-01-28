@@ -8,9 +8,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.util.UriEncoder;
-import ru.abradox.exception.BusinessException;
 import ru.abradox.platformapi.crm.UserInfo;
 import ru.abradox.platformgateway.client.crm.CrmClient;
+import ru.abradox.platformgateway.exception.UserInfoException;
 
 @Slf4j
 @Component
@@ -37,7 +37,7 @@ public class AddUserInfoHeader extends AbstractGatewayFilterFactory<AddUserInfoH
                 .doOnNext(userInfoResponse -> {
 
                     if (userInfoResponse.getStatusCode() != 0) {
-                        throw new BusinessException(userInfoResponse);
+                        throw new UserInfoException(userInfoResponse);
                     }
 
                     var request = exchange.getRequest();

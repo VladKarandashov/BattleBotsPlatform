@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.abradox.common.response.GenericResponse;
 import ru.abradox.middlewareservice.service.StatisticService;
+import ru.abradox.platformapi.common.response.GenericResponse;
 import ru.abradox.platformapi.statistic.current.CompetitionInfo;
 import ru.abradox.platformapi.statistic.history.HistoryInfo;
 

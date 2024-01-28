@@ -3,7 +3,7 @@ package ru.abradox.middlewareservice.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.abradox.common.response.GenericResponse;
+import ru.abradox.platformapi.common.response.GenericResponse;
 import ru.abradox.platformapi.crm.UserInfo;
 
 @Slf4j

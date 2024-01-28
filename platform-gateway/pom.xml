@@ -44,7 +44,7 @@
 
 		<dependency>
 			<groupId>ru.abradox</groupId>
-			<artifactId>platform-utils</artifactId>
+			<artifactId>platform-api</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
