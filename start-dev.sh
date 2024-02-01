@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# shellcheck disable=SC2046
+docker stop $(docker ps -aq)
+
+docker rm $(docker ps -aq)
+
 ENV_FILE="/home/abradox/work/BattleBotsConfig/app.env"
 
 docker run --network="host" --env-file "$ENV_FILE" -p 8761:8761 -d admin-service-image

@@ -3,6 +3,8 @@ server:
 
 eureka:
   client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
     register-with-eureka: false
 
 spring:
@@ -18,6 +20,14 @@ spring:
   boot:
     admin:
       context-path: /admin
+      instance-auth:
+        enabled: false
+  security:
+    basic:
+      enabled: true
+    user:
+      name: ${ADMIN_LOGIN}
+      password: ${ADMIN_PASSWORD}
 
 management:
   endpoints:
