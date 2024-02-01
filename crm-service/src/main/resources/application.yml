@@ -1,45 +1,9 @@
-server:
-  port: 8082
-
 spring:
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://89.23.118.89:5432/default_db
-    username: gen_user
-    password: adZdfzCuo1xZdxhgf1674
-  liquibase:
-    enabled: true
-    changeLog: classpath:db/changelog/db.changelog-master.xml
-  jpa:
-    showSql: false
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        default_schema: public
-    database: postgresql
   application:
     name: crm-service
     instance_id: ${random.uuid}
-
-logging:
-  level:
-    org:
-      springframework:
-        web:
-          filter:
-            CommonsRequestLoggingFilter: DEBUG
-  file:
-    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: ALWAYS
-  info:
-    env:
-      enabled: true
+  config:
+    import: optional:configserver:http://app:a88ca849-dfcb-421d-b922-eb4a21dd9e96@localhost:8888
+    cloud:
+      config:
+        fail-fast: true

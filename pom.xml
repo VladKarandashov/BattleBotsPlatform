@@ -22,6 +22,7 @@
         <springCloud.version>2023.0.0</springCloud.version>
         <springCloudConfig.version>4.1.0</springCloudConfig.version>
         <springCloudGateway.version>4.1.1</springCloudGateway.version>
+        <springCloudConfigServer.version>4.1.0</springCloudConfigServer.version>
         <springCloudEurekaClient>4.1.0</springCloudEurekaClient>
         <mavenSurfirePlugin.version>3.1.2</mavenSurfirePlugin.version>
         <mavenCompilerPlugin.version>3.12.1</mavenCompilerPlugin.version>
@@ -39,6 +40,7 @@
     </properties>
 
     <modules>
+        <module>config-service</module>
         <module>crm-service</module>
         <module>token-service</module>
         <module>statistic-service</module>
@@ -126,12 +128,12 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-config-server</artifactId>
-                <version>${springCloud.version}</version>
+                <version>${springCloudConfigServer.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-config</artifactId>
-                <version>${springCloudConfig.version}</version>
+                <version>${springCloudConfigServer.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
