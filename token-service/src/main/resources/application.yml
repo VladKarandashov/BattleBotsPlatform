@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://89.23.118.39:5432/default_db
-    username: gen_user
-    password: 6LPH8d9SiOsQ473209GkgIgf
+    url: ${TOKEN_URL}
+    username: ${TOKEN_USERNAME}
+    password: ${TOKEN_PASSWORD}
   liquibase:
     enabled: true
     changeLog: classpath:db/changelog/db.changelog-master.xml

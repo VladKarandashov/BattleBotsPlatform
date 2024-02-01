@@ -40,7 +40,6 @@
     </properties>
 
     <modules>
-        <module>config-service</module>
         <module>crm-service</module>
         <module>token-service</module>
         <module>statistic-service</module>

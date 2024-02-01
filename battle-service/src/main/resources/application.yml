@@ -8,17 +8,16 @@ spring:
   data:
     redis:
       database: 0
-      host: 82.97.255.239
+      host: ${REDIS_HOST}
       port: 6379
-      password: WXamUD1CUJnuBKLdjvf23
+      password: ${REDIS_PASSWORD}
       timeout: 10000
       username: default
-
   rabbitmq:
-    host: 82.97.244.140
+    host: ${RABBIT_HOST}
     port: 5672
-    username: gen_user
-    password: UllXbQ168mlP4567UIGIUhiofd
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
     virtual-host: default_vhost
     listener:
       simple:

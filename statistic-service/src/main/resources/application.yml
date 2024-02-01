@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://94.241.138.243:5432/default_db
-    username: gen_user
-    password: HWv6Yo4bIwI3FJjlk4357JHK
+    url: ${STATISTIC_URL}
+    username: ${STATISTIC_USERNAME}
+    password: ${STATISTIC_PASSWORD}
   liquibase:
     enabled: true
     changeLog: classpath:db/changelog/db.changelog-master.xml
@@ -22,10 +22,10 @@ spring:
     name: statistic-service
     instance_id: ${random.uuid}
   rabbitmq:
-    host: 82.97.244.140
+    host: ${RABBIT_HOST}
     port: 5672
-    username: gen_user
-    password: UllXbQ168mlP4567UIGIUhiofd
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
     virtual-host: default_vhost
 management:
   endpoints:
