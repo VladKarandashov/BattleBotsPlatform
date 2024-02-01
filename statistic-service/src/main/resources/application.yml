@@ -27,6 +27,16 @@ spring:
     username: ${RABBIT_USERNAME}
     password: ${RABBIT_PASSWORD}
     virtual-host: default_vhost
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+
 management:
   endpoints:
     web:

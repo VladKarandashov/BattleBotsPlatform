@@ -21,6 +21,15 @@ spring:
   application:
     name: crm-service
     instance_id: ${random.uuid}
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
 
 logging:
   level:

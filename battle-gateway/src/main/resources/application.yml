@@ -18,6 +18,16 @@ spring:
         retry:
           enabled: false
         prefetch: 1
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+
 management:
   endpoints:
     web:

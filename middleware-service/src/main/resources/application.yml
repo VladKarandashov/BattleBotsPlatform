@@ -15,6 +15,15 @@ spring:
   application:
     name: middleware-service
     instance_id: ${random.uuid}
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
 
 management:
   endpoints:

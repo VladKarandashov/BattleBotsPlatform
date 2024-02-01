@@ -20,6 +20,8 @@ class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers("/").permitAll()
+                        .pathMatchers("/healthcheck").permitAll()
+                        .pathMatchers("/actuator/**").permitAll()
                         .anyExchange().authenticated())
                 .build();
     }
