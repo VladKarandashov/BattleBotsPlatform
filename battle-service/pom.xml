@@ -111,6 +111,7 @@
                         <image>${name}-image</image>
                     </to>
                     <container>
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                         <ports>
                             <port>8085</port>
                         </ports>
