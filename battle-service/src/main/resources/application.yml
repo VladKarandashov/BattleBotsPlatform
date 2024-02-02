@@ -21,8 +21,8 @@ spring:
     virtual-host: default_vhost
     listener:
       simple:
-        concurrency: 10
-        max-concurrency: 30
+        concurrency: 30
+        max-concurrency: 100
         retry:
           enabled: false
         prefetch: 1

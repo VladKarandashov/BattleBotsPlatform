@@ -16,7 +16,7 @@ public class LimiterManager {
     private final RateLimiterConfig config = RateLimiterConfig.custom()
             .timeoutDuration(Duration.ofMillis(100))
             .limitRefreshPeriod(Duration.ofSeconds(1))
-            .limitForPeriod(3) // Max 3 сообщения в секунду
+            .limitForPeriod(6)
             .build();
 
     public RateLimiter getLimiter(String token) {
