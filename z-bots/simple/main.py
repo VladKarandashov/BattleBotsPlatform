@@ -31,7 +31,7 @@ if __name__ == "__main__":
         "botName": args.name,
         "botToken": args.token
     }
-    ws = websocket.WebSocketApp("ws://localhost:8090/ws/battle",
+    ws = websocket.WebSocketApp("ws://147.45.107.29:8090/ws/battle",
                                 header=headers,
                                 on_open=on_open,
                                 on_message=on_message,
