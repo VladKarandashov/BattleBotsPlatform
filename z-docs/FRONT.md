@@ -19,3 +19,28 @@
 * 3002 - BLOCKED - перенаправить на страницу блока
 
 Каждый запрос на back желательно оборачивать в обработчик этих statusCode, так как пользователь может быть заблокирован в любой момент.
+
+# Главная страница
+
+На главной странице можно отображать информацию о пользователе и разделы. 
+Пример html реализации: [index.html](../middleware-service/src/main/resources/templates/index.html)
+
+Для получения информации о пользователе необходимо сделать запрос GET /middleware/api/v1/whoami приложив credentials.
+
+Структура ответа:
+
+```json
+{
+    "statusCode": 0,
+    "data": {
+        "id": 1,
+        "login": "abradoxPython",
+        "email": "abradoxPython@yandex.ru",
+        "nickName": "vlad",
+        "firstName": "Владислав",
+        "lastName": "Карандашов",
+        "fullName": "Владислав Карандашов"
+    }
+}
+```
+nickname - это telegram
