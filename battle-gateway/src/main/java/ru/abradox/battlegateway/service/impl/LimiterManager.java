@@ -16,7 +16,7 @@ public class LimiterManager {
     private final RateLimiterConfig config = RateLimiterConfig.custom()
             .timeoutDuration(Duration.ofMillis(100))
             .limitRefreshPeriod(Duration.ofSeconds(1))
-            .limitForPeriod(6)
+            .limitForPeriod(8)
             .build();
 
     public RateLimiter getLimiter(String token) {
