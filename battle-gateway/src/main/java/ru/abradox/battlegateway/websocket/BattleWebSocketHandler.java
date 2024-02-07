@@ -9,6 +9,7 @@ import ru.abradox.battlegateway.service.AuthService;
 import ru.abradox.battlegateway.service.ConnectionService;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -27,10 +28,17 @@ public class BattleWebSocketHandler implements WebSocketHandler {
     public Mono<Void> handle(WebSocketSession session) {
         // Получение параметров для проверки пользователя
         var headers = session.getHandshakeInfo().getHeaders();
-        var botNameHeader = headers.getFirst("botName");
-        var botTokenHeader = headers.getFirst("botToken");
+        var header = headers.getFirst("Sec-WebSocket-Protocol");
+        log.info("Пришёл бот с параметрами: {}", header);
+        var parts = Optional.ofNullable(header)
+                .map(s -> s.split(", "))
+                .map(s -> (s.length == 2) ? s : null)
+                .orElse(new String[]{"", ""});
+        var botNameHeader = parts[0];
+        var botTokenHeader = parts[1];
+
         if (!authService.checkBotAccess(botNameHeader, botTokenHeader)) {
-            log.info("Бот [{} {}] не прошёл аутентификацию", botNameHeader, botTokenHeader);
+            log.error("Бот [{} {}] не прошёл аутентификацию", botNameHeader, botTokenHeader);
             return session.close(); // Закрываем соединение, если проверка не прошла
         }
         var botToken = UUID.fromString(Objects.requireNonNull(botTokenHeader));

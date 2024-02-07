@@ -32,8 +32,9 @@ if __name__ == "__main__":
     args = p.parse_args()
     
     headers = {
-        "botName": args.name,
-        "botToken": args.token
+        #"botName": args.name,
+        #"botToken": args.token
+        "Sec-WebSocket-Protocol": args.name+", "+args.token
     }
     ws = websocket.WebSocketApp("ws://147.45.107.29:8090/ws/battle",
                                 header=headers,
