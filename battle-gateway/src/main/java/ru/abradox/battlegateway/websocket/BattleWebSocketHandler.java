@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import ru.abradox.battlegateway.service.AuthService;
 import ru.abradox.battlegateway.service.ConnectionService;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,22 +30,26 @@ public class BattleWebSocketHandler implements WebSocketHandler {
         // Получение параметров для проверки пользователя
         var headers = session.getHandshakeInfo().getHeaders();
         var header = headers.getFirst("Sec-WebSocket-Protocol");
-        log.info("Пришёл бот с параметрами: {}", header);
+        log.info("Пришёл бот с параметрами: '{}'", header);
         var parts = Optional.ofNullable(header)
                 .map(s -> s.split(", "))
                 .map(s -> (s.length == 2) ? s : null)
                 .orElse(new String[]{"", ""});
-        var botNameHeader = parts[0];
-        var botTokenHeader = parts[1];
+        log.info("После разделения получил параметры '{}'", Arrays.toString(parts));
+        var botNameHeader = parts[0].strip();
+        var botTokenHeader = parts[1].strip();
 
+        log.info("Начинаю аутентификацию для '{}' '{}'", botNameHeader, botTokenHeader);
         if (!authService.checkBotAccess(botNameHeader, botTokenHeader)) {
-            log.error("Бот [{} {}] не прошёл аутентификацию", botNameHeader, botTokenHeader);
+            log.error("Бот ['{}' '{}'] не прошёл аутентификацию", botNameHeader, botTokenHeader);
             return session.close(); // Закрываем соединение, если проверка не прошла
         }
+        log.info("Аутентификация для '{}' '{}' прошла успешно", botNameHeader, botTokenHeader);
         var botToken = UUID.fromString(Objects.requireNonNull(botTokenHeader));
 
         connectionService.putConnection(botToken, session);
 
+        log.info("Соединение '{}' '{}' установлено", botNameHeader, botTokenHeader);
         return session.receive() // Получаем сообщения от пользователя
                 .doOnNext(message -> {
                     String userMessage = message.getPayloadAsText();
