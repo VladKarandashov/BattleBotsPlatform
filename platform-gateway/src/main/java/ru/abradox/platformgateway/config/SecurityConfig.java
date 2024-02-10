@@ -17,6 +17,7 @@ class SecurityConfig {
     public SecurityWebFilterChain clientSecurityFilterChain(ServerHttpSecurity http) {
         return http
                 .oauth2Login(Customizer.withDefaults())
+                .cors(ServerHttpSecurity.CorsSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers("/").permitAll()
