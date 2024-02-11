@@ -41,6 +41,11 @@ logging:
   file:
     name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"
 
+redirect:
+  lk-url: ${REDIRECT_LK_URL}
+  registration-url: ${REDIRECT_REGISTRATION_URL}
+  blocked-url: ${REDIRECT_BLOCKED_URL}
+
 management:
   endpoints:
     web:
