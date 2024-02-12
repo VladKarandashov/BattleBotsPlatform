@@ -67,23 +67,23 @@ public class CardGameService implements GameService {
     public void doAction(RoundState round, UUID token, BotAction botAction) {
         // Проверить что мы ждём ход именно этого бота.
         // Проверить, что он правильно выбрал линии атаки/защиты по своему статусу (или он сдался).
-        var action = botAction.getCode();
+        ActionCode action = botAction.getCode();
         checkActionAllowed(round, token, action);
         // Далее уже конкретные действия
-        switch (action.getCode()) {
-            case 1:
+        switch (action) {
+            case ATTACK:
                 attackAction(round, token, botAction.getCards());
                 break;
-            case 2:
+            case DISCARD:
                 discardAction(round);
                 break;
-            case 3:
+            case DEFEND:
                 defendAction(round, token, botAction.getCards());
                 break;
-            case 4:
+            case TAKE:
                 takeAction(round, token);
                 break;
-            case 5:
+            case GIVE_UP:
                 giveUpAction(round, token);
                 break;
         }
