@@ -55,6 +55,10 @@ spring:
       client:
         username: ${ADMIN_LOGIN}
         password: ${ADMIN_PASSWORD}
+
+cors:
+  ips: ${CORS_IPS}
+
 eureka:
   client:
     serviceUrl:
