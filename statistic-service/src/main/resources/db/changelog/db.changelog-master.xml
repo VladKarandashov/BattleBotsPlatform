@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+    <changeSet id="start" author="karandashov">
+        <tagDatabase tag="init"/>
+    </changeSet>
+
+    <include file="ddl/2024-01-16--shedlock.xml" relativeToChangelogFile="true"/>
+    <include file="ddl/2024-01-16--bot.xml" relativeToChangelogFile="true"/>
+    <include file="ddl/2024-01-16--round.xml" relativeToChangelogFile="true"/>
+    <include file="ddl/2024-01-23--history.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

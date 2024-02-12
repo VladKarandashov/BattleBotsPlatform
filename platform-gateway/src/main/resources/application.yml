@@ -1,0 +1,73 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: platform-gateway-service
+    instance_id: ${random.uuid}
+  cloud:
+    gateway:
+      routes:
+        - id: middleware
+          uri: lb://middleware-service
+          predicates:
+            - Path=/middleware/**
+            - Method=GET,POST,PUT,DELETE
+          filters:
+            - StripPrefix=1
+            - TokenRelay=
+            - RemoveRequestHeader=user
+            - AddUserInfoHeader=
+            - RemoveRequestHeader=cookie
+            - RemoveRequestHeader=authorization
+        - id: crm
+          uri: lb://crm-service
+          predicates:
+            - Path=/crm/**
+            - Method=GET,POST,PUT,DELETE
+          filters:
+            - StripPrefix=1
+            - TokenRelay=
+            - RemoveRequestHeader=user
+            - AddProviderInfoHeader=
+            - RemoveRequestHeader=cookie
+            - RemoveRequestHeader=authorization
+  main:
+    web-application-type: reactive
+  security:
+    oauth2:
+      client:
+        registration:
+          yandex:
+            client-id: ${YANDEX_CLIENT_ID}
+            client-secret: ${YANDEX_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_basic
+            redirect-uri: ${YANDEX_REDIRECT_URI}
+        provider:
+          yandex:
+            authorization-uri: https://oauth.yandex.ru/authorize
+            token-uri: https://oauth.yandex.ru/token
+            user-info-uri: https://login.yandex.ru/info
+            user-name-attribute: login
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+
+cors:
+  ips: ${CORS_IPS}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      show-details: ALWAYS

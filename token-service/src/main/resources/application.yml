@@ -1,0 +1,49 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${TOKEN_URL}
+    username: ${TOKEN_USERNAME}
+    password: ${TOKEN_PASSWORD}
+  liquibase:
+    enabled: true
+    changeLog: classpath:db/changelog/db.changelog-master.xml
+  jpa:
+    showSql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: public
+    database: postgresql
+  application:
+    name: token-service
+    instance_id: ${random.uuid}
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true
+
+logging:
+  file:
+    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"

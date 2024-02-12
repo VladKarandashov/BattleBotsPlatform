@@ -1,0 +1,42 @@
+server:
+  port: 8761
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+    register-with-eureka: false
+
+spring:
+  application:
+    name: admin-service
+    instance_id: ${random.uuid}
+  rabbitmq:
+    host: ${RABBIT_HOST}
+    port: 5672
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
+    virtual-host: default_vhost
+  boot:
+    admin:
+      context-path: /admin
+      instance-auth:
+        enabled: false
+  security:
+    basic:
+      enabled: true
+    user:
+      name: ${ADMIN_LOGIN}
+      password: ${ADMIN_PASSWORD}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true

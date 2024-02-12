@@ -1,0 +1,59 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${CRM_URL}
+    username: ${CRM_USERNAME}
+    password: ${CRM_PASSWORD}
+  liquibase:
+    enabled: true
+    changeLog: classpath:db/changelog/db.changelog-master.xml
+  jpa:
+    showSql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: public
+    database: postgresql
+  application:
+    name: crm-service
+    instance_id: ${random.uuid}
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
+  file:
+    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"
+
+redirect:
+  lk-url: ${REDIRECT_LK_URL}
+  registration-url: ${REDIRECT_REGISTRATION_URL}
+  blocked-url: ${REDIRECT_BLOCKED_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true

@@ -1,0 +1,53 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: battle-service
+    instance_id: ${random.uuid}
+  data:
+    redis:
+      database: 0
+      host: ${REDIS_HOST}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+      timeout: 10000
+      username: default
+  rabbitmq:
+    host: ${RABBIT_HOST}
+    port: 5672
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
+    virtual-host: default_vhost
+    listener:
+      simple:
+        concurrency: 30
+        max-concurrency: 100
+        retry:
+          enabled: false
+        prefetch: 1
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true
+
+logging:
+  file:
+    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"

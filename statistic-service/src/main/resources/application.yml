@@ -1,0 +1,53 @@
+server:
+  port: 8084
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${STATISTIC_URL}
+    username: ${STATISTIC_USERNAME}
+    password: ${STATISTIC_PASSWORD}
+  liquibase:
+    enabled: true
+    changeLog: classpath:db/changelog/db.changelog-master.xml
+  jpa:
+    showSql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: public
+    database: postgresql
+  application:
+    name: statistic-service
+    instance_id: ${random.uuid}
+  rabbitmq:
+    host: ${RABBIT_HOST}
+    port: 5672
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
+    virtual-host: default_vhost
+  boot:
+    admin:
+      client:
+        username: ${ADMIN_LOGIN}
+        password: ${ADMIN_PASSWORD}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: true
+logging:
+  file:
+    name: "./logs/${spring.application.name}/${spring.application.instance_id}.log"

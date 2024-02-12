@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+</head>
+<body>
+
+Пожалуйста подождите, получаю данные из Яндекс!
+
+<div id="urls" style="display: none;">
+    <p id="data-lk-url"><span th:text="${LK_URL}"></span></p>
+    <p id="data-registration-url"><span th:text="${REGISTRATION_URL}"></span></p>
+    <p id="data-blocked-url"><span th:text="${BLOCKED_URL}"></span></p>
+</div>
+
+<script>
+
+    const lkUrl = document.getElementById("data-lk-url").getElementsByTagName("span")[0].innerHTML;
+    const registrationUrl = document.getElementById("data-registration-url").getElementsByTagName("span")[0].innerHTML;
+    const blockedUrl = document.getElementById("data-blocked-url").getElementsByTagName("span")[0].innerHTML;
+
+    fetch('/crm/api/v1/auth', {
+        method: 'POST',
+        credentials: 'include'
+    })
+        .then(response => response.json())
+        .then(data => {
+            const statusCode = data.statusCode;
+            if (statusCode === 3000) {
+                window.location.href = lkUrl;
+            } else if (statusCode === 3001) {
+                window.location.href = registrationUrl;
+            } else if (statusCode === 3002) {
+                window.location.href = blockedUrl;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            window.location.href = blockedUrl;
+        });
+</script>
+</body>
+</html>

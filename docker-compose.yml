@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  admin-service:
+    image: admin-service-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+
+  token-service:
+    image: token-service-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+    depends_on:
+      - admin-service
+
+  battle-service:
+    image: battle-service-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+    depends_on:
+      - admin-service
+
+  statistic-service:
+    image: statistic-service-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+    depends_on:
+      - admin-service
+
+  middleware-service:
+    image: middleware-service-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+    depends_on:
+      - token-service
+      - battle-service
+      - statistic-service
+
+  crm-service:
+    image: crm-service-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+    depends_on:
+      - token-service
+      - battle-service
+      - statistic-service
+
+  platform-gateway:
+    image: platform-gateway-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+    depends_on:
+      - middleware-service
+      - crm-service
+
+  battle-gateway:
+    image: battle-gateway-image
+    network_mode: "host"
+    env_file:
+      - /home/abradox/work/BattleBotsConfig/app.env
+    depends_on:
+      - middleware-service
+      - crm-service
