@@ -151,6 +151,7 @@ class Bot:
             
 
         assert len(self.opponent_cards) <= data['opponentLeft'], "Я знаю слишком много карт"
+        assert len(self.discards.intersection(self.hand_cards.union(self.opponent_cards, self.table_cards))) == 0, "Карты на руках и в отбое"
 
         response = {'roundId': data['id'], 'code': code, 'cards': [{'suit': card.suit, 'number': card.rank} for card in cards]}
         self.sended_message = response

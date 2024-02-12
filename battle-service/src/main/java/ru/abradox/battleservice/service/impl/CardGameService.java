@@ -122,6 +122,9 @@ public class CardGameService implements GameService {
         if (!botState.getHandCards().containsAll(cards)) {
             throw new ActionException(new ServerResponse(StatusCode.NOT_HAVE_CARDS));
         }
+        if (round.getTable().isEmpty() && !isCardSimilarity(cards)) {
+            throw new ActionException(new ServerResponse(StatusCode.WRONG_CARDS_ATTACK));
+        }
         if (!round.getTable().isEmpty() && !isCardSimilarity(round.getTable(), cards)) {
             throw new ActionException(new ServerResponse(StatusCode.WRONG_CARDS_ATTACK));
         }
@@ -190,6 +193,7 @@ public class CardGameService implements GameService {
 
             tableDto.setBeaten(beatingCard);
             cards.remove(beatingCard); // Удаляем использованную карту
+            botState.getHandCards().remove(beatingCard);
         }
 
         // update time
@@ -252,6 +256,10 @@ public class CardGameService implements GameService {
                 .map(CardDto::getNumber)
                 .collect(Collectors.toSet());
         return desiredCards.stream().map(CardDto::getNumber).allMatch(existOnTableCardNumbers::contains);
+    }
+
+    private boolean isCardSimilarity(Set<CardDto> cards) {
+        return cards.stream().map(CardDto::getNumber).distinct().count() == 1;
     }
 
     private void finishRound(RoundState round) {
