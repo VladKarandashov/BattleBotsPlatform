@@ -77,7 +77,7 @@ public class RoundServiceImpl implements RoundService {
                 throw new ActionException(new ServerResponse(StatusCode.ROUND_ALREADY_FINISHED));
             }
             log.debug("Новое действие пользователя {} с телом {} для раунда {}", token, action, round);
-            lockExecutor.execute(round.toString(), 3, () -> gameService.doAction(round, token, action));
+            lockExecutor.execute(roundId.toString(), 3, () -> gameService.doAction(round, token, action));
         } catch (ActionException e) {
             log.error("Бизнес ошибка", e);
             var response = new BotWrapper<>(token, e.getResponse());
