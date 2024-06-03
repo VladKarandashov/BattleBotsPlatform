@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-table-user" author="karandashov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user"/>
+            </not>
+        </preConditions>
+        
+        <comment>Create table User</comment>
+        
+        <createTable tableName="user">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="provider_id" type="VARCHAR(256)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="login" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nick_name" type="VARCHAR(256)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="first_name" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(256)"/>
+            <column name="full_name" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blocked" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="user"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="user-sequence-id" author="karandashov">
+        <preConditions>
+            <tableExists tableName="user"/>
+            <columnExists tableName="user" columnName="id"/>
+            <not>
+                <sequenceExists sequenceName="user_seq_id"/>
+            </not>
+        </preConditions>
+
+        <comment>Create a sequence for table user</comment>
+
+        <createSequence
+                sequenceName="user_seq_id"
+                incrementBy="1"
+                minValue="1"
+                startValue="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="user_seq_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create-index-in-table-user" author="karandashov">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="user"/>
+            <columnExists tableName="user" columnName="provider_id"/>
+            <not>
+                <indexExists tableName="user" columnNames="provider_id"/>
+            </not>
+        </preConditions>
+
+        <comment>Create index for table user</comment>
+
+        <createIndex tableName="user" indexName="idx_user_provider_id">
+            <column name="provider_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="user" indexName="idx_user_provider_id"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
